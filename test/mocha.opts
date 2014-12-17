@@ -1,0 +1,5 @@
+--reporter dot
+--require should
+--timeout 3500
+--recursive
+--check-leaks

@@ -1,0 +1,1 @@
+global.odba = require("../../node-odba-core");
