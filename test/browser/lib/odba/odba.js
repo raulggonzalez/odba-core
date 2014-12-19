@@ -32,6 +32,10 @@ describe("odba - Browser", function() {
       window.should.not.have.property("ResultFilter");
     });
 
+    it("!window.Server", function() {
+      window.should.not.have.property("Server");
+    });
+
     it("!window.Table", function() {
       window.should.not.have.property("Table");
     });

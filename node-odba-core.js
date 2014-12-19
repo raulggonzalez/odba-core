@@ -1,4 +1,4 @@
-/*! odba-core - 0.1.0 (2014-12-17) */
+/*! odba-core - 0.2.0 (2014-12-19) */
 
 (function() {
 
@@ -90,6 +90,18 @@ Connection.prototype.clone = function clone() {
  * @abstract
  */
 Connection.prototype.__defineGetter__("connected", function() {
+  throw new Error("Abstract property.");
+});
+
+/**
+ * The server object as connected.
+ *
+ * @name server
+ * @type {odba.Server}
+ * @memberof odba.Server#
+ * @abstract
+ */
+Connection.prototype.__defineGetter__("server", function() {
   throw new Error("Abstract property.");
 });
 
@@ -365,7 +377,7 @@ function Driver(name) {
    * @type {String}
    * @memberof odba.Driver#
    */
-  Object.defineProperty(this, "name", {value: name});
+  Object.defineProperty(this, "name", {value: name, enumerable: true});
 }
 
 /**
@@ -405,7 +417,7 @@ Driver.getDriver = function getDriver(name) {
 };
 
 /**
- * Creates a connection object to the IndexedDB engine.
+ * Creates a connection object
  *
  * @name createConnection
  * @function
@@ -419,6 +431,24 @@ Driver.getDriver = function getDriver(name) {
  * cx = drv.createConnection({database: "mydb"});
  */
 Driver.prototype.createConnection = function createConnection() {
+  throw new Error("Abstract method.");
+};
+
+/**
+ * Creates and opens a connection.
+ *
+ * @name openConnection
+ * @function
+ * @memberof odba.Driver#
+ * @abstract
+ *
+ * @param {Object} config     The configuration object.
+ * @param {Function} callback The function to call: fn(error, cx).
+ *
+ * @example An IndexedDB connection.
+ * drv.openConnection({database: "mydb"}, function(error, cx) { ... });
+ */
+Driver.prototype.openConnection = function openConnection(config, callback) {
   throw new Error("Abstract method.");
 };
 
@@ -926,6 +956,51 @@ ResultFilter.prototype.$notIn = function $notIn(row, prop, value) {
 };
 
 /**
+ * A database engine.
+ *
+ * @class odba.Server
+ * @abstract
+ */
+function Server() {
+
+}
+
+/**
+ * The hostname.
+ *
+ * @name host
+ * @memberof odba.Server#
+ * @abstract
+ */
+Server.prototype.__defineGetter__("host", function() {
+  throw new Error("Abstract method.");
+});
+
+/**
+ * The port.
+ *
+ * @name port
+ * @memberof odba.Server#
+ * @abstract
+ */
+Server.prototype.__defineGetter__("port", function() {
+  throw new Error("Abstract method.");
+});
+
+/**
+ * The server version.
+ *
+ * @name version
+ * @memberof odba.Server#
+ * @abstract
+ */
+Server.prototype.__defineGetter__("version", function() {
+  throw new Error("Abstract method.");
+});
+
+
+
+/**
  * A table.
  *
  * @class odba.Table
@@ -1234,6 +1309,7 @@ Object.defineProperty(odba, "Index", {value: Index, enumerable: true});
 Object.defineProperty(odba, "Query", {value: Query, enumerable: true});
 Object.defineProperty(odba, "Result", {value: Result, enumerable: true});
 Object.defineProperty(odba, "ResultFilter", {value: ResultFilter, enumerable: true});
+Object.defineProperty(odba, "Server", {value: Server, enumerable: true});
 Object.defineProperty(odba, "Table", {value: Table, enumerable: true});
 
 })();

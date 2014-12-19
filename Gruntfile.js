@@ -14,6 +14,21 @@ module.exports = function(grunt) {
         }
       },
 
+      test: {
+        options: {
+          ignores: [
+            "test/vendor/**",
+            "test/mocha.opts",
+            "test/browser/index.html",
+            "test/browser/index.min.html"
+          ]
+        },
+
+        files: {
+          src: ["test/**"]
+        }
+      },
+
       browser: {
         options: {
           jshintrc: true
@@ -146,30 +161,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-jsdoc");
 
   //(3) define tasks
-  grunt.registerTask("browser", "Generates browser-odba-core.", [
-    "concat:browser",
-    "jshint:browser",
-    "uglify:browser",
-    "test:chrome",
-    "test:chrome:min"
-  ]);
-
-  grunt.registerTask("node", "Generates node-odba-core.", [
-    "concat:node",
-    "jshint:node",
-    "uglify:node",
-    "test:node"
-  ]);
-
-  grunt.registerTask("api.html.zip", "Generates the API doc.", [
-    "clean:doc",
-    "jsdoc:api.html",
-    "compress:api.html",
-    "clean:doc",
-  ]);
-
-  grunt.registerTask("all", "Generates browser and Node modules.", ["browser", "node", "api.html.zip"]);
-
   grunt.registerTask("test", "Perform the unit testing.", function test(target, type) {
     var chrome = (target == "chrome");
     var firefox = (target == "firefox");
@@ -195,5 +186,35 @@ module.exports = function(grunt) {
       });
     }
   });
+
+  grunt.registerTask("browser", "Generates browser-odba-core.", [
+    "concat:browser",
+    "jshint:browser",
+    "uglify:browser",
+    "test:chrome",
+    "test:chrome:min"
+  ]);
+
+  grunt.registerTask("node", "Generates node-odba-core.", [
+    "concat:node",
+    "jshint:node",
+    "uglify:node",
+    "test:node"
+  ]);
+
+  grunt.registerTask("api.html.zip", "Generates the API doc.", [
+    "clean:doc",
+    "jsdoc:api.html",
+    "compress:api.html",
+    "clean:doc",
+  ]);
+
+  grunt.registerTask("all", "Generates browser and Node modules.", [
+    "jshint:grunt",
+    "jshint:test",
+    "browser",
+    "node",
+    "api.html.zip"
+  ]);
 };
 

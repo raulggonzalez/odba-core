@@ -32,6 +32,10 @@ describe("odba", function() {
       odba.should.have.property("ResultFilter");
     });
 
+    it("odba.Server", function() {
+      odba.should.have.property("Server");
+    });
+
     it("odba.Table", function() {
       odba.should.have.property("Table");
     });
