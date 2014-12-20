@@ -1,4 +1,4 @@
-describe("Result", function() {
+describe("odba.Result", function() {
   var Result = odba.Result;
 
   var rows = [

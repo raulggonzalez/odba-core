@@ -1,4 +1,4 @@
-describe("Combinator", function() {
+describe("odba.Combinator", function() {
   var combinator = new odba.Combinator();
 
   var users = [

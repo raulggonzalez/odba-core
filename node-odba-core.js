@@ -1,4 +1,4 @@
-/*! odba-core - 0.2.0 (2014-12-19) */
+/*! odba-core - 0.3.0 (2014-12-20) */
 
 (function() {
 
@@ -381,6 +381,16 @@ function Driver(name) {
 }
 
 /**
+ * The driver cache.
+ *
+ * @name cache
+ * @type {Object}
+ * @memberof odba.Driver
+ * @private
+ */
+Object.defineProperty(Driver, "cache", {value: {}});
+
+/**
  * Returns a specified driver.
  *
  * @memberof odba.Driver
@@ -393,27 +403,51 @@ function Driver(name) {
  * drv = odba.Driver.getDriver("C*");
  */
 Driver.getDriver = function getDriver(name) {
-  var cache, drv;
+  var cache = odba.Driver.cache;
 
-  //(1) get driver cache
-  if (!("cache" in this)) {
-    Object.defineProperty(this, "cache", {value: {}});
+  //(1) pre: arguments
+  if (!name) {
+    throw new Error("Driver name expected.");
   }
 
-  cache = this.cache;
+  //(2) return driver
+  return cache[name.toLowerCase()];
+};
 
-  //(2) get driver
-  name = name.toLowerCase();
-  drv = cache[name];
+/**
+ * Registers a driver.
+ * This method is used by the drivers to register in the ODBA API.
+ *
+ * @name register
+ * @function
+ * @memberof odba.Driver
+ *
+ * @param {odba.Driver} driver      The driver.
+ * @param {String|String[]} [alias] The driver alias.
+ *
+ * @example
+ * odba.Driver.register(new IndexedDBDriver());
+ * odba.Driver.register(new CassandraDriver(), "C*");
+ */
+Driver.register = function register(driver, alias) {
+  var cache = odba.Driver.cache;
 
-  if (!drv) {
-    if (name == "indexeddb") {
-      drv = cache.indexeddb = new odba.indexeddb.IndexedDBDriver();
+  //(1) pre: arguments
+  if (!driver) {
+    throw new Error("Driver expected.");
+  }
+
+
+  //(2) register
+  cache[driver.name.toLowerCase()] = driver;
+
+  if (alias) {
+    if (typeof(alias) == "string") alias = [alias];
+
+    for (var i = 0; i < alias.length; ++i) {
+      cache[alias[i].toLowerCase()] = driver;
     }
   }
-
-  //(3) return driver
-  return drv;
 };
 
 /**

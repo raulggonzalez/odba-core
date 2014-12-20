@@ -1,4 +1,4 @@
-describe("ResultFilter", function() {
+describe("odba.ResultFilter", function() {
   var Result = odba.Result;
   var filter = new odba.ResultFilter();
   var rows = [
