@@ -1,4 +1,4 @@
-/*! odba-core - 0.4.0 (2014-12-21) */
+/*! odba-core - 0.4.1 (2014-12-21) */
 
 (function() {
 
@@ -474,7 +474,6 @@ Driver.prototype.createConnection = function createConnection() {
  * @name openConnection
  * @function
  * @memberof odba.Driver#
- * @abstract
  *
  * @param {Object} config     The configuration object.
  * @param {Function} callback The function to call: fn(error, cx).
@@ -483,7 +482,25 @@ Driver.prototype.createConnection = function createConnection() {
  * drv.openConnection({database: "mydb"}, function(error, cx) { ... });
  */
 Driver.prototype.openConnection = function openConnection(config, callback) {
-  throw new Error("Abstract method.");
+  var cx;
+
+  //(1) pre: arguments
+  if (!config) {
+    throw new Error("Configuration expected.");
+  }
+
+  if (!callback) {
+    throw new Error("Callback expected.");
+  }
+
+  //(2) create connection
+  cx = this.createConnection(config);
+
+  //(3) open connection
+  cx.open(function(error) {
+    if (error) callback(error);
+    else callback(undefined, cx);
+  });
 };
 
 /**
