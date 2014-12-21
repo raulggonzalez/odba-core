@@ -1,4 +1,4 @@
-/*! odba-core - 0.3.0 (2014-12-20) */
+/*! odba-core - 0.4.0 (2014-12-21) */
 
 (function() {
 
@@ -98,7 +98,7 @@ Connection.prototype.__defineGetter__("connected", function() {
  *
  * @name server
  * @type {odba.Server}
- * @memberof odba.Server#
+ * @memberof odba.Connection#
  * @abstract
  */
 Connection.prototype.__defineGetter__("server", function() {
@@ -1032,7 +1032,51 @@ Server.prototype.__defineGetter__("version", function() {
   throw new Error("Abstract method.");
 });
 
+/**
+ * Creates a new database.
+ *
+ * @name createDatabase
+ * @function
+ * @memberof odba.Server#
+ * @abstract
+ *
+ * @param {String} name         The database name.
+ * @param {Object} [options]    The database options.
+ * @param {Function} [callback] The function to call: fn(error).
+ */
+Server.prototype.createDatabase = function createDatabase() {
+  throw new Error("Abstract method.");
+};
 
+/**
+ * Checks whether a database exists.
+ *
+ * @name hasDatabase
+ * @function
+ * @memberof odba.Server#
+ * @abstract
+ *
+ * @param {String} name       The database name.
+ * @param {Function} callback The function to call: fn(error, exists).
+ */
+Server.prototype.hasDatabase = function hasDatabase() {
+  throw new Error("Abstract method.");
+};
+
+/**
+ * Drops a database.
+ *
+ * @name dropDatabase
+ * @function
+ * @memberof odba.Server#
+ * @abstract
+ *
+ * @param {String} name         The database name.
+ * @param {Function} [callback] The function to call: fn(error).
+ */
+Server.prototype.dropDatabase = function dropDatabase() {
+  throw new Error("Abstract method.");
+};
 
 /**
  * A table.
