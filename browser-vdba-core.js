@@ -1,4 +1,4 @@
-/*! vdba-core - 0.6.0 (2014-12-26) */
+/*! vdba-core - 0.6.1 (2014-12-26) */
 
 (function() {
 
@@ -731,30 +731,28 @@ Query.prototype.findAll = function findAll() {
 /**
  * findAll() with casting.
  *
- * @name findAll
+ * @name mapAll
  * @function
  * @memberof vdba.Query#
  *
  * @param {Object|Function|String[]} map  The mapping.
  * @param {Function} callback             The function to call: fn(error, result).
+ *
+ * @example
+ * q.mapAll(["userId"], function(error, result) { ... });
+ * q.mapAll({clss: User}, function(error, result) { ... });
+ * q.mapAll({clss: User, map: ["userId"]}, function(error, result) { ... });
+ * q.mapAll({clss: User, map: {userid: "userId"}}, function(error, result) { ... });
  */
 Query.prototype.mapAll = function mapAll(map, callback) {
   //(1) pre: arguments
-  if (!map) {
-    throw new Error("Map expected.");
-  }
-
-  if (!callback) {
-    throw new Error("Callback expected.");
-  }
+  if (!map) throw new Error("Map expected.");
+  if (!callback) throw new Error("Callback expected.");
 
   //(2) find and map
   this.findAll(function(error, result) {
-    if (error) {
-      callback(error);
-    } else {
-      callback(undefined, new vdba.Mapper().map(map, result));
-    }
+    if (error) callback(error);
+    else callback(undefined, new vdba.Mapper().map(map, result));
   });
 };
 
@@ -779,7 +777,6 @@ Query.prototype.find = function find() {
  * @name map
  * @function
  * @memberof vdba.Query#
- * @abstract
  *
  * @param {Object|Function|String[]} map  The mapping.
  * @param {Object} [filter]               The condition.
@@ -787,14 +784,15 @@ Query.prototype.find = function find() {
  */
 Query.prototype.map = function(map, filter, callback) {
   //(1) pre: arguments
-  if (!map) {
-    throw new Error("Map expected.");
+  if (arguments.length == 2) {
+    if (arguments[1] instanceof Function) {
+      callback = arguments[1];
+      filter = undefined;
+    }
   }
 
-  if (arguments.length == 2) {
-    callback = arguments[1];
-    filter = undefined;
-  }
+  if (!map) throw new Error("Map expected.");
+  if (!callback) throw new Error("Callback expected.");
 
   //(2) find and map
   this.find(filter, function(error, result) {
@@ -827,14 +825,32 @@ Query.prototype.findOne = function findOne() {
  * @name mapOne
  * @function
  * @memberof vdba.Query#
- * @abstract
  *
  * @param {Object|Function|String[]} map  The mapping.
  * @param {Object} [filter]               The filter object.
  * @param {Function} callback             The function to call: fn(error, record).
  */
-Query.prototype.mapOne = function mapOne(){
-  throw new Error("Abstract method.");
+Query.prototype.mapOne = function mapOne(map, filter, callback){
+  //(1) pre: arguments
+  if (arguments.length == 2) {
+    if (arguments[1] instanceof Function) {
+      callback = arguments[1];
+      filter = undefined;
+    }
+  }
+
+  if (!map) throw new Error("Map expected.");
+  if (!callback) throw new Error("Callback expected.");
+
+  //(2) find and map
+  this.findOne(filter, function(error, row) {
+    if (error) {
+      callback(error);
+    } else {
+      if (!row) callback();
+      else callback(undefined, new vdba.Mapper().mapRow(map, row));
+    }
+  });
 };
 
 /**
@@ -1532,16 +1548,6 @@ Table.prototype.find = function find(filter, callback) {
  * @param {Function} callback             The function to call: fn(error, result).
  */
 Table.prototype.map = function(map, filter, callback) {
-  //(1) pre: arguments
-  if (arguments.length == 2) {
-    callback = arguments[1];
-    filter = undefined;
-  }
-
-  if (!map) throw new Error("Map expected.");
-  if (!callback) throw new Error("Callback expected.");
-
-  //(2) map
   this.query().map(map, filter, callback);
 };
 
@@ -1573,11 +1579,6 @@ Table.prototype.findAll = function findAll(callback) {
  * @param {Function} callback             The function to call: fn(error, result).
  */
 Table.prototype.mapAll = function mapAll(map, callback) {
-  //(1) pre: arguments
-  if (!map) throw new Error("Map expected.");
-  if (!callback) throw new Error("Callback expected.");
-
-  //(2) map
   this.query().mapAll(map, callback);
 };
 
@@ -1614,16 +1615,6 @@ Table.prototype.findOne = function findOne(filter, callback) {
  * @param {Function} callback             The function to call: fn(error, row).
  */
 Table.prototype.mapOne = function mapOne(map, filter, callback) {
-  //(1) pre: arguments
-  if (arguments.length == 2) {
-    callback = arguments[1];
-    filter = undefined;
-  }
-
-  if (!map) throw new Error("Map expected.");
-  if (!callback) throw new Error("Callback expected.");
-
-  //(2) map
   this.query().mapOne(map, filter, callback);
 };
 
