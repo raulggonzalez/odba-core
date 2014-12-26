@@ -1,22 +1,22 @@
 {
-  "name": "odba-core",
-  "version": "0.5.0",
-  "description": "The ODBA core.",
+  "name": "vdba-core",
+  "version": "0.6.0",
+  "description": "VDBA (Valencia DB API) core.",
   "author": "Raúl G. González <raulggonzalezsw@outlook.com>",
   "keywords": [
-    "ODBA",
+    "VDBA",
     "databases",
     "storage"
   ],
-  "homepage": "https://github.com/raulggonzalez/odba-core",
+  "homepage": "https://github.com/raulggonzalez/vdba-core",
   "bugs": {
-    "url": "https://github.com/raulggonzalez/odba-core/issues"
+    "url": "https://github.com/raulggonzalez/vdba-core/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/raulggonzalez/odba-core.git"
+    "url": "https://github.com/raulggonzalez/vdba-core.git"
   },
-  "main": "node-odba-core.min.js",
+  "main": "node-vdba-core.min.js",
   "dependencies": {},
   "devDependencies": {
     "grunt": "^0.4.5",

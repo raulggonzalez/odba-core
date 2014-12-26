@@ -1,6 +1,5 @@
 --reporter dot
 --require should
---require sinon
 --timeout 3500
 --recursive
 --check-leaks

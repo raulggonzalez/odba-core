@@ -1,5 +1,5 @@
-describe("odba.Combinator", function() {
-  var combinator = new odba.Combinator();
+describe("vdba.Combinator", function() {
+  var combinator = new vdba.Combinator();
 
   var users = [
     {userId: 1, username: "user01", password: "pwd01"},

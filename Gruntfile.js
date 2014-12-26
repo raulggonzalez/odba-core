@@ -24,8 +24,8 @@ module.exports = function(grunt) {
           footer: "\n\n" + grunt.file.read("lib/browser-api.js") + "\n\n})();"
         },
 
-        src: ["lib/odba/**"],
-        dest: "browser-odba-core.js"
+        src: ["lib/vdba/**"],
+        dest: "browser-vdba-core.js"
       },
 
       node: {
@@ -34,8 +34,8 @@ module.exports = function(grunt) {
           footer: "\n\n" + grunt.file.read("lib/node-api.js") + "\n\n})();"
         },
 
-        src: ["lib/odba/**"],
-        dest: "node-odba-core.js"
+        src: ["lib/vdba/**"],
+        dest: "node-vdba-core.js"
       }
     },
 
@@ -56,7 +56,7 @@ module.exports = function(grunt) {
 
     jsdoc: {
       "api.html": {
-        src: ["browser-odba-core.js"],
+        src: ["browser-vdba-core.js"],
         options: {
           recurse: true,
           template: "templates/default",
@@ -73,7 +73,7 @@ module.exports = function(grunt) {
         },
 
         files: {
-          src: ["browser-odba-core.js"]
+          src: ["browser-vdba-core.js"]
         }
       },
 
@@ -95,7 +95,7 @@ module.exports = function(grunt) {
         },
 
         files: {
-          src: ["node-odba-core.js"]
+          src: ["node-vdba-core.js"]
         }
       },
 
@@ -145,13 +145,13 @@ module.exports = function(grunt) {
 
       browser: {
         files: {
-          "browser-odba-core.min.js": ["browser-odba-core.js"]
+          "browser-vdba-core.min.js": ["browser-vdba-core.js"]
         }
       },
 
       node: {
         files: {
-          "node-odba-core.min.js": ["node-odba-core.js"]
+          "node-vdba-core.min.js": ["node-vdba-core.js"]
         }
       }
     }
@@ -193,7 +193,7 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask("browser", "Generates browser-odba-core.", [
+  grunt.registerTask("browser", "Generates browser-vdba-core.", [
     "concat:browser",
     "jshint:browser",
     "uglify:browser",
@@ -203,7 +203,7 @@ module.exports = function(grunt) {
     "test:firefox:min"
   ]);
 
-  grunt.registerTask("node", "Generates node-odba-core.", [
+  grunt.registerTask("node", "Generates node-vdba-core.", [
     "concat:node",
     "jshint:node",
     "uglify:node",

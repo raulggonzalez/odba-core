@@ -1,11 +1,11 @@
-/*! odba-core - 0.5.0 (2014-12-26) */
+/*! vdba-core - 0.6.0 (2014-12-26) */
 
 (function() {
 
 /**
  * A combinator.
  *
- * @class odba.Combinator
+ * @class vdba.Combinator
  * @private
  */
 function Combinator() {
@@ -15,7 +15,7 @@ function Combinator() {
 /**
  * Joins two row sets.
  *
- * memberof odba.Combinator#
+ * @memberof vdba.Combinator#
  *
  * @param {Object[]} source   The source-side rows.
  * @param {Object[]} target   The target-side rows.
@@ -27,7 +27,7 @@ function Combinator() {
  * @param {Object[]}
  */
 Combinator.prototype.join = function join(source, target, sourceCol, targetCol, opts) {
-  var res = [], arrayAgg, util = odba.util;
+  var res = [], arrayAgg, util = vdba.util;
 
   //(1) pre: arguments
   arrayAgg = opts.arrayAgg;
@@ -53,7 +53,7 @@ Combinator.prototype.join = function join(source, target, sourceCol, targetCol, 
 /**
  * A connection.
  *
- * @class odba.Connection
+ * @class vdba.Connection
  * @abstract
  *
  * @param {Object} config The configuration.
@@ -64,7 +64,7 @@ function Connection(config) {
    *
    * @name config
    * @type {Object}
-   * @memberof odba.Connection#
+   * @memberof vdba.Connection#
    */
   Object.defineProperty(this, "config", {value: config, enumerable: true});
 }
@@ -74,7 +74,7 @@ function Connection(config) {
  *
  * @name clone
  * @function
- * @memberof odba.Connection#
+ * @memberof vdba.Connection#
  * @abstract
  */
 Connection.prototype.clone = function clone() {
@@ -86,7 +86,7 @@ Connection.prototype.clone = function clone() {
  *
  * @name connected
  * @type {Boolean}
- * @memberof odba.Connection#
+ * @memberof vdba.Connection#
  * @abstract
  */
 Connection.prototype.__defineGetter__("connected", function() {
@@ -97,8 +97,8 @@ Connection.prototype.__defineGetter__("connected", function() {
  * The server object as connected.
  *
  * @name server
- * @type {odba.Server}
- * @memberof odba.Connection#
+ * @type {vdba.Server}
+ * @memberof vdba.Connection#
  * @abstract
  */
 Connection.prototype.__defineGetter__("server", function() {
@@ -110,7 +110,7 @@ Connection.prototype.__defineGetter__("server", function() {
  *
  * @name open
  * @function
- * @memberof odba.Connection#
+ * @memberof vdba.Connection#
  * @abstract
  *
  * @param {Function} [callback] The function to call: fn(error, db).
@@ -127,7 +127,7 @@ Connection.prototype.open = function open() {
  *
  * @name close
  * @function
- * @memberof odba.Connection#
+ * @memberof vdba.Connection#
  * @abstract
  *
  * @param {Function} [callback] The function to call: fn(error).
@@ -145,7 +145,7 @@ Connection.prototype.close = function close() {
  *
  * @name runTransaction
  * @function
- * @memberof odba.Connection#
+ * @memberof vdba.Connection#
  * @abstract
  *
  * @param {String} mode         The transaction mode: readonly or readwrite.
@@ -163,7 +163,7 @@ Connection.prototype.runTransaction = function runTransaction() {
 /**
  * A database.
  *
- * @class odba.Database
+ * @class vdba.Database
  * @abstract
  */
 function Database() {
@@ -175,7 +175,7 @@ function Database() {
  *
  * @name name
  * @type {String}
- * @memberof odba.Database#
+ * @memberof vdba.Database#
  * @abstract
  */
 Database.prototype.__defineGetter__("name", function() {
@@ -187,7 +187,7 @@ Database.prototype.__defineGetter__("name", function() {
  *
  * @name hasTable
  * @function
- * @memberof odba.Database#
+ * @memberof vdba.Database#
  * @abstract
  *
  * @param {String} name       The table name.
@@ -205,7 +205,7 @@ Database.prototype.hasTable = function hasTable() {
  *
  * @name hasTables
  * @function
- * @memberof odba.Database#
+ * @memberof vdba.Database#
  * @abstract
  *
  * @param {String[]} names    The table names.
@@ -223,7 +223,7 @@ Database.prototype.hasTables = function hasTables() {
  *
  * @name findTable
  * @function
- * @memberof odba.Database#
+ * @memberof vdba.Database#
  * @abstract
  *
  * @param {String} name       The table name.
@@ -241,7 +241,7 @@ Database.prototype.findTable = function findTable() {
  *
  * @name createTable
  * @function
- * @memberof odba.Database#
+ * @memberof vdba.Database#
  * @abstract
  *
  * @param {String} name         The table name.
@@ -257,7 +257,7 @@ Database.prototype.createTable = function createTable() {
  *
  * @name createTables
  * @function
- * @memberof odba.Database#
+ * @memberof vdba.Database#
  * @abstract
  *
  * @param {Object[]} tables     The tables info.
@@ -272,7 +272,7 @@ Database.prototype.createTables = function createTables() {
  *
  * @name dropTable
  * @function
- * @memberof odba.Database#
+ * @memberof vdba.Database#
  * @abstract
  *
  * @param {String} name         The table name.
@@ -287,7 +287,7 @@ Database.prototype.dropTable = function dropTable() {
  *
  * @name findIndex
  * @function
- * @memberof odba.Database#
+ * @memberof vdba.Database#
  * @abstract
  *
  * @param {String} table      The table name.
@@ -306,7 +306,7 @@ Database.prototype.findIndex = function findIndex() {
  *
  * @name hasIndex
  * @function
- * @memberof odba.Database#
+ * @memberof vdba.Database#
  * @abstract
  *
  * @param {String} table      The object store name.
@@ -322,7 +322,7 @@ Database.prototype.hasIndex = function hasIndex() {
  *
  * @name createIndex
  * @function
- * @memberof odba.Database#
+ * @memberof vdba.Database#
  * @abstract
  *
  * @param {String} table        The table name.
@@ -346,7 +346,7 @@ Database.prototype.createIndex = function createIndex() {
  *
  * @name dropIndex
  * @function
- * @memberof odba.Database#
+ * @memberof vdba.Database#
  * @abstract
  *
  * @param {String} table        The table name.
@@ -362,9 +362,9 @@ Database.prototype.dropIndex = function dropIndex() {
 };
 
 /**
- * An ODBA driver.
+ * A VDBA driver.
  *
- * @class odba.Driver
+ * @class vdba.Driver
  * @abstract
  *
  * @param {String} name The driver name.
@@ -375,7 +375,7 @@ function Driver(name) {
    *
    * @name name
    * @type {String}
-   * @memberof odba.Driver#
+   * @memberof vdba.Driver#
    */
   Object.defineProperty(this, "name", {value: name, enumerable: true});
 }
@@ -385,7 +385,7 @@ function Driver(name) {
  *
  * @name cache
  * @type {Object}
- * @memberof odba.Driver
+ * @memberof vdba.Driver
  * @private
  */
 Object.defineProperty(Driver, "cache", {value: {}});
@@ -393,17 +393,17 @@ Object.defineProperty(Driver, "cache", {value: {}});
 /**
  * Returns a specified driver.
  *
- * @memberof odba.Driver
+ * @memberof vdba.Driver
  *
  * @param {String} name The driver name: IndexedDB, C*, Cassandra, PostgreSQL, etc.
  * @returns A driver or undefined if the name is invalid.
  *
  * @example
- * drv = odba.Driver.getDriver("IndexedDB");
- * drv = odba.Driver.getDriver("C*");
+ * drv = vdba.Driver.getDriver("IndexedDB");
+ * drv = vdba.Driver.getDriver("C*");
  */
 Driver.getDriver = function getDriver(name) {
-  var cache = odba.Driver.cache;
+  var cache = vdba.Driver.cache;
 
   //(1) pre: arguments
   if (!name) {
@@ -416,21 +416,21 @@ Driver.getDriver = function getDriver(name) {
 
 /**
  * Registers a driver.
- * This method is used by the drivers to register in the ODBA API.
+ * This method is used by the drivers to register in the VDBA API.
  *
  * @name register
  * @function
- * @memberof odba.Driver
+ * @memberof vdba.Driver
  *
- * @param {odba.Driver} driver      The driver.
+ * @param {vdba.Driver} driver      The driver.
  * @param {String|String[]} [alias] The driver alias.
  *
  * @example
- * odba.Driver.register(new IndexedDBDriver());
- * odba.Driver.register(new CassandraDriver(), "C*");
+ * vdba.Driver.register(new IndexedDBDriver());
+ * vdba.Driver.register(new CassandraDriver(), "C*");
  */
 Driver.register = function register(driver, alias) {
-  var cache = odba.Driver.cache;
+  var cache = vdba.Driver.cache;
 
   //(1) pre: arguments
   if (!driver) {
@@ -455,11 +455,11 @@ Driver.register = function register(driver, alias) {
  *
  * @name createConnection
  * @function
- * @memberof odba.Driver#
+ * @memberof vdba.Driver#
  * @abstract
  *
  * @param {Object} config The connection configuration.
- * @returns {odba.Connection}
+ * @returns {vdba.Connection}
  *
  * @example An IndexedDB connection.
  * cx = drv.createConnection({database: "mydb"});
@@ -473,7 +473,7 @@ Driver.prototype.createConnection = function createConnection() {
  *
  * @name openConnection
  * @function
- * @memberof odba.Driver#
+ * @memberof vdba.Driver#
  *
  * @param {Object} config     The configuration object.
  * @param {Function} callback The function to call: fn(error, cx).
@@ -506,7 +506,7 @@ Driver.prototype.openConnection = function openConnection(config, callback) {
 /**
  * An index.
  *
- * @class odba.Index
+ * @class vdba.Index
  * @abstract
  */
 function Index() {
@@ -517,8 +517,8 @@ function Index() {
  * The database.
  *
  * @name table
- * @type {odba.Database}
- * @memberof odba.Index#
+ * @type {vdba.Database}
+ * @memberof vdba.Index#
  * @abstract
  */
 Index.prototype.__defineGetter__("database", function() {
@@ -529,8 +529,8 @@ Index.prototype.__defineGetter__("database", function() {
  * The table.
  *
  * @name table
- * @type {odba.Table}
- * @memberof odba.Index#
+ * @type {vdba.Table}
+ * @memberof vdba.Index#
  * @abstract
  */
 Index.prototype.__defineGetter__("table", function() {
@@ -542,7 +542,7 @@ Index.prototype.__defineGetter__("table", function() {
  *
  * @name name
  * @type {String}
- * @memberof odba.Index#
+ * @memberof vdba.Index#
  * @abstract
  */
 Index.prototype.__defineGetter__("name", function() {
@@ -554,7 +554,7 @@ Index.prototype.__defineGetter__("name", function() {
  *
  * @name unique
  * @type {Boolean}
- * @memberof odba.indexeddb.IndexedDBIndex#
+ * @memberof vdba.indexeddb.IndexedDBIndex#
  * @abstract
  */
 Index.prototype.__defineGetter__("unique", function() {
@@ -564,7 +564,7 @@ Index.prototype.__defineGetter__("unique", function() {
 /**
  * A mapper.
  *
- * @class odba.Mapper
+ * @class vdba.Mapper
  * @protected
  */
 function Mapper() {
@@ -576,10 +576,10 @@ function Mapper() {
  *
  * @name map
  * @function
- * @memberof odba.Mapper#
+ * @memberof vdba.Mapper#
  *
  * @param {Object|String[]|Function} map  How to map.
- * @param {odba.Result|Object[]} rows     The rows or the result to cast.
+ * @param {vdba.Result|Object[]} rows     The rows or the result to cast.
  *
  * @returns {Object[]}
  */
@@ -587,7 +587,7 @@ Mapper.prototype.map = function(map, rows) {
   var res;
 
   //(1) map
-  if (rows instanceof odba.Result) {
+  if (rows instanceof vdba.Result) {
     res = this.mapResult(map, rows);
   } else {
     res = this.mapRows(map, rows);
@@ -635,7 +635,7 @@ Mapper.prototype.mapResult = function(map, result) {
  *
  * @name mapRow
  * @function
- * @memberof odba.Mapper#
+ * @memberof vdba.Mapper#
  *
  * @param {Object|String[]|Function} map  How to map.
  * @param {Object} row                    The row to cast.
@@ -707,7 +707,7 @@ Mapper.prototype.customMap = function(map, row) {
 /**
  * A query.
  *
- * @class odba.Query
+ * @class vdba.Query
  * @abstract
  */
 function Query() {
@@ -719,7 +719,7 @@ function Query() {
  *
  * @name findAll
  * @function
- * @memberof odba.Query#
+ * @memberof vdba.Query#
  * @abstract
  *
  * @param {Function} callback The function to call: fn(error, result).
@@ -733,7 +733,7 @@ Query.prototype.findAll = function findAll() {
  *
  * @name findAll
  * @function
- * @memberof odba.Query#
+ * @memberof vdba.Query#
  *
  * @param {Object|Function|String[]} map  The mapping.
  * @param {Function} callback             The function to call: fn(error, result).
@@ -753,7 +753,7 @@ Query.prototype.mapAll = function mapAll(map, callback) {
     if (error) {
       callback(error);
     } else {
-      callback(undefined, new odba.Mapper().map(map, result));
+      callback(undefined, new vdba.Mapper().map(map, result));
     }
   });
 };
@@ -763,7 +763,7 @@ Query.prototype.mapAll = function mapAll(map, callback) {
  *
  * @name find
  * @function
- * @memberof odba.Query#
+ * @memberof vdba.Query#
  * @abstract
  *
  * @param {Object} [filter]   The filter object.
@@ -778,7 +778,7 @@ Query.prototype.find = function find() {
  *
  * @name map
  * @function
- * @memberof odba.Query#
+ * @memberof vdba.Query#
  * @abstract
  *
  * @param {Object|Function|String[]} map  The mapping.
@@ -801,7 +801,7 @@ Query.prototype.map = function(map, filter, callback) {
     if (error) {
       callback(error);
     } else {
-      callback(undefined, new odba.Mapper().map(map, result));
+      callback(undefined, new vdba.Mapper().map(map, result));
     }
   });
 };
@@ -811,7 +811,7 @@ Query.prototype.map = function(map, filter, callback) {
  *
  * @name findOne
  * @function
- * @memberof odba.Query#
+ * @memberof vdba.Query#
  * @abstract
  *
  * @param {Object} [filter]   The filter object.
@@ -826,7 +826,7 @@ Query.prototype.findOne = function findOne() {
  *
  * @name mapOne
  * @function
- * @memberof odba.Query#
+ * @memberof vdba.Query#
  * @abstract
  *
  * @param {Object|Function|String[]} map  The mapping.
@@ -842,15 +842,15 @@ Query.prototype.mapOne = function mapOne(){
  *
  * @name join
  * @function
- * @memberof odba.Query#
+ * @memberof vdba.Query#
  * @abstract
  *
- * @param {String|odba.Table} target  The target table.
+ * @param {String|vdba.Table} target  The target table.
  * @param {String} col1               The source column.
  * @param {String} [col2]             The target column.
  * @param {Function} [callback]       The function to call: function(error, result).
  *
- * @returns {odba.Query} If no callback is specified, it returns the query.
+ * @returns {vdba.Query} If no callback is specified, it returns the query.
  *
  * @example Natural join.
  * q.join("session", "userId")
@@ -870,7 +870,7 @@ Query.prototype.join = function join() {
 /**
  * A query result.
  *
- * @class odba.Result
+ * @class vdba.Result
  *
  * @param {Array} rows        The rows.
  * @param {Object} [options]  The options.
@@ -881,7 +881,7 @@ function Result(rows, options) {
    *
    * @name rows
    * @type {Object[]}
-   * @memberof odba.Result#
+   * @memberof vdba.Result#
    */
   Object.defineProperty(this, "rows", {value: rows});
 
@@ -890,7 +890,7 @@ function Result(rows, options) {
    *
    * @name options
    * @type {Object}
-   * @memberof odba.Result#
+   * @memberof vdba.Result#
    */
   Object.defineProperty(this, "options", {value: options || {}});
 }
@@ -900,7 +900,7 @@ function Result(rows, options) {
  *
  * @name length
  * @type {Number}
- * @memberof odba.Result#
+ * @memberof vdba.Result#
  */
 Result.prototype.__defineGetter__("length", function() {
   return this.rows.length;
@@ -911,14 +911,14 @@ Result.prototype.__defineGetter__("length", function() {
  *
  * @name find
  * @function
- * @memberof odba.Result#
+ * @memberof vdba.Result#
  *
  * @param {Object} [where]  The restriction condition.
  *
  * @returns {Object[]}
  */
 Result.prototype.find = function find(where) {
-  return new odba.ResultFilter().find(this, where);
+  return new vdba.ResultFilter().find(this, where);
 };
 
 /**
@@ -927,7 +927,7 @@ Result.prototype.find = function find(where) {
  *
  * @name map
  * @function
- * @memberof odba.Result#
+ * @memberof vdba.Result#
  *
  * @param {Object} map      The mapping.
  * @param {Object} [where]  The restriction condition.
@@ -935,13 +935,13 @@ Result.prototype.find = function find(where) {
  * @returns {Object[]}
  */
 Result.prototype.map = function(map, where) {
-  return new odba.Mapper().map(map, this.find(where));
+  return new vdba.Mapper().map(map, this.find(where));
 };
 
 /**
  * A result filter.
  *
- * @class
+ * @class vdba.ResultFilter
  * @private
  */
 function ResultFilter() {
@@ -951,7 +951,7 @@ function ResultFilter() {
 /**
  * Filters rows of a result.
  *
- * @memberof odba.ResultFilter#
+ * @memberof vdba.ResultFilter#
  *
  * @param {Result} result The result set.
  * @param {Object} filter The filter.
@@ -978,7 +978,7 @@ ResultFilter.prototype.find = function find(result, filter) {
 /**
  * Checks whether a row satifies the filter.
  *
- * @memberof odba.ResultFilter#
+ * @memberof vdba.ResultFilter#
  *
  * @param {Object} row    The row to check.
  * @param {Object} filter The filter.
@@ -1013,7 +1013,7 @@ ResultFilter.prototype.check = function check(row, filter) {
 /**
  * Checks whether a property satisfies its filter.
  *
- * @memberof odba.ResultFilter#
+ * @memberof vdba.ResultFilter#
  * @private
  *
  * @param {Object} row    The row to check.
@@ -1057,7 +1057,7 @@ ResultFilter.prototype.checkProp = function checkProp(row, prop, filter) {
 /**
  * Checks a property with an operator.
  *
- * @memberof odba.ResultFilter#
+ * @memberof vdba.ResultFilter#
  * @private
  *
  * @param {Object} row    The row to check.
@@ -1090,7 +1090,7 @@ ResultFilter.prototype.checkOp = function checkOp(row, prop, op, filter) {
 /**
  * Checks the operator $eq.
  *
- * @memberof odba.ResultFilter#
+ * @memberof vdba.ResultFilter#
  * @private
  *
  * @param {Object} row    The row to check.
@@ -1108,7 +1108,7 @@ ResultFilter.prototype.$eq = function $eq(row, prop, value) {
 /**
  * Checks the operator $ne.
  *
- * @memberof odba.ResultFilter#
+ * @memberof vdba.ResultFilter#
  * @private
  *
  * @param {Object} row    The row to check.
@@ -1126,7 +1126,7 @@ ResultFilter.prototype.$ne = function $ne(row, prop, value) {
 /**
  * Checks the operator $lt.
  *
- * @memberof odba.ResultFilter#
+ * @memberof vdba.ResultFilter#
  * @private
  *
  * @param {Object} row    The row to check.
@@ -1143,7 +1143,7 @@ ResultFilter.prototype.$lt = function $lt(row, prop, value) {
 /***
  * Checks the operator $le.
  *
- * @memberof odba.ResultFilter#
+ * @memberof vdba.ResultFilter#
  * @private
  *
  * @param {Object} row    The row to check.
@@ -1160,7 +1160,7 @@ ResultFilter.prototype.$le = function $le(row, prop, value) {
 /**
  * Checks the operator $gt.
  *
- * @memberof odba.ResultFilter#
+ * @memberof vdba.ResultFilter#
  * @private
  *
  * @param {Object} row    The row to check.
@@ -1177,7 +1177,7 @@ ResultFilter.prototype.$gt = function $gt(row, prop, value) {
 /**
  * Checks the operator $ge.
  *
- * @memberof odba.ResultFilter#
+ * @memberof vdba.ResultFilter#
  * @private
  *
  * @param {Object} row    The row to check.
@@ -1194,7 +1194,7 @@ ResultFilter.prototype.$ge = function $ge(row, prop, value) {
 /**
  * Checks the operator $like.
  *
- * @memberof odba.ResultFilter#
+ * @memberof vdba.ResultFilter#
  * @private
  *
  * @param {Object} row    The row to check.
@@ -1211,7 +1211,7 @@ ResultFilter.prototype.$like = function $like(row, prop, value) {
 /**
  * Checks the operator $notLike.
  *
- * @memberof odba.ResultFilter#
+ * @memberof vdba.ResultFilter#
  * @private
  *
  * @param {Object} row    The row to check.
@@ -1228,7 +1228,7 @@ ResultFilter.prototype.$notLike = function $notLike(row, prop, value) {
 /**
  * Checks the operator $in.
  *
- * @memberof odba.ResultFilter#
+ * @memberof vdba.ResultFilter#
  * @private
  *
  * @param {Object} row    The row to check.
@@ -1245,7 +1245,7 @@ ResultFilter.prototype.$in = function $in(row, prop, value) {
 /**
  * Checks the operator $notIn.
  *
- * @memberof odba.ResultFilter#
+ * @memberof vdba.ResultFilter#
  * @private
  *
  * @param {Object} row    The row to check.
@@ -1261,7 +1261,7 @@ ResultFilter.prototype.$notIn = function $notIn(row, prop, value) {
 /**
  * A database engine.
  *
- * @class odba.Server
+ * @class vdba.Server
  * @abstract
  */
 function Server() {
@@ -1272,7 +1272,7 @@ function Server() {
  * The hostname.
  *
  * @name host
- * @memberof odba.Server#
+ * @memberof vdba.Server#
  * @abstract
  */
 Server.prototype.__defineGetter__("host", function() {
@@ -1283,7 +1283,7 @@ Server.prototype.__defineGetter__("host", function() {
  * The port.
  *
  * @name port
- * @memberof odba.Server#
+ * @memberof vdba.Server#
  * @abstract
  */
 Server.prototype.__defineGetter__("port", function() {
@@ -1294,7 +1294,7 @@ Server.prototype.__defineGetter__("port", function() {
  * The server version.
  *
  * @name version
- * @memberof odba.Server#
+ * @memberof vdba.Server#
  * @abstract
  */
 Server.prototype.__defineGetter__("version", function() {
@@ -1306,7 +1306,7 @@ Server.prototype.__defineGetter__("version", function() {
  *
  * @name createDatabase
  * @function
- * @memberof odba.Server#
+ * @memberof vdba.Server#
  * @abstract
  *
  * @param {String} name         The database name.
@@ -1322,7 +1322,7 @@ Server.prototype.createDatabase = function createDatabase() {
  *
  * @name hasDatabase
  * @function
- * @memberof odba.Server#
+ * @memberof vdba.Server#
  * @abstract
  *
  * @param {String} name       The database name.
@@ -1337,7 +1337,7 @@ Server.prototype.hasDatabase = function hasDatabase() {
  *
  * @name dropDatabase
  * @function
- * @memberof odba.Server#
+ * @memberof vdba.Server#
  * @abstract
  *
  * @param {String} name         The database name.
@@ -1350,7 +1350,7 @@ Server.prototype.dropDatabase = function dropDatabase() {
 /**
  * A table.
  *
- * @class odba.Table
+ * @class vdba.Table
  * @abstract
  */
 function Table() {
@@ -1361,8 +1361,8 @@ function Table() {
  * The database object.
  *
  * @name database
- * @type {odba.Database}
- * @memberof odba.Table#
+ * @type {vdba.Database}
+ * @memberof vdba.Table#
  * @abstract
  */
 Table.prototype.__defineGetter__("database", function() {
@@ -1374,7 +1374,7 @@ Table.prototype.__defineGetter__("database", function() {
  *
  * @name name
  * @type {String}
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  * @abstract
  */
 Table.prototype.__defineGetter__("name", function() {
@@ -1386,7 +1386,7 @@ Table.prototype.__defineGetter__("name", function() {
  *
  * @name hasIndex
  * @function
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  *
  * @param {String} name       The index name.
  * @param {Function} callback The function to call: fn(error, exists).
@@ -1410,7 +1410,7 @@ Table.prototype.hasIndex = function hasIndex(name, callback) {
  *
  * @name findIndex
  * @function
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  *
  * @param {String} name       The index name.
  * @param {Function} callback The function to call: fn(error, exists).
@@ -1430,7 +1430,7 @@ Table.prototype.findIndex = function findIndex(name, callback) {
  *
  * @name createIndex
  * @function
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  *
  * @param {String} name         The index name.
  * @param {String} col          The column.
@@ -1461,7 +1461,7 @@ Table.prototype.createIndex = function createIndex(name, col, options, callback)
  *
  * @name dropIndex
  * @function
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  *
  * @param {String} name         The index name.
  * @param {Function} [callback] The function to call: fn(error).
@@ -1485,11 +1485,11 @@ Table.prototype.dropIndex = function dropIndex(name, callback) {
  *
  * @name query
  * @function
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  * @protected
  * @abstract
  *
- * @returns {odba.Query}
+ * @returns {vdba.Query}
  */
 Table.prototype.query = function query() {
   throw new Error("Abstract method.");
@@ -1500,7 +1500,7 @@ Table.prototype.query = function query() {
  *
  * @name find
  * @function
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  *
  * @param {Object} filter     The condition.
  * @param {Function} callback The function to call: fn(error, result).
@@ -1525,7 +1525,7 @@ Table.prototype.find = function find(filter, callback) {
  *
  * @name map
  * @function
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  *
  * @param {Object|Function|String[]} map  The mapping.
  * @param {Object} [filter]               The condition.
@@ -1550,7 +1550,7 @@ Table.prototype.map = function(map, filter, callback) {
  *
  * @name findAll
  * @function
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  *
  * @param {Function} callback The function to call: fn(error, result).
  */
@@ -1567,7 +1567,7 @@ Table.prototype.findAll = function findAll(callback) {
  *
  * @name mapAll
  * @function
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  *
  * @param {Object|Function|String[]} map  The mapping.
  * @param {Function} callback             The function to call: fn(error, result).
@@ -1586,7 +1586,7 @@ Table.prototype.mapAll = function mapAll(map, callback) {
  *
  * @name findOne
  * @function
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  *
  * @param {Object} [filter]   The condition.
  * @param {Function} callback The function to call: fn(error, row).
@@ -1607,7 +1607,7 @@ Table.prototype.findOne = function findOne(filter, callback) {
  *
  * @name mapOne
  * @function
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  *
  * @param {Object|Function|String[]} map  The mapping.
  * @param {Object} [filter]               The condition.
@@ -1632,7 +1632,7 @@ Table.prototype.mapOne = function mapOne(map, filter, callback) {
  *
  * @name count
  * @function
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  * @abstract
  *
  * @param {Function} callback The function to call: fn(error, count).
@@ -1646,14 +1646,14 @@ Table.prototype.count = function count() {
  *
  * @name join
  * @function
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  *
- * @param {String|odba.Table} target  The target table name.
+ * @param {String|vdba.Table} target  The target table name.
  * @param {String} col1               The source column.
  * @param {String} [col2]             The target column.
  * @param {Function} [callback]       The function to call: fn(error, result).
  *
- * @returns {odba.Query} If the call doesn't pass a callback, it returns a Query;
+ * @returns {vdba.Query} If the call doesn't pass a callback, it returns a Query;
  *                       otherwise, asynchronous call.
  */
 Table.prototype.join = function join(target, col1, col2, callback) {
@@ -1684,7 +1684,7 @@ Table.prototype.join = function join(target, col1, col2, callback) {
  *
  * @name insert
  * @function
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  * @abstract
  *
  * @param {object|Object[]} rows  The row(s) to insert.
@@ -1700,7 +1700,7 @@ Table.prototype.insert = function insert() {
  *
  * @name save
  * @function
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  * @abstract
  *
  * @param {Object|Object[]} rows  The row(s) to save.
@@ -1719,7 +1719,7 @@ Table.prototype.save = function save() {
  *
  * @name update
  * @function
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  * @abstract
  *
  * @param {Object} [where]      The condition.
@@ -1739,7 +1739,7 @@ Table.prototype.update = function update() {
  *
  * @name remove
  * @function
- * @memberof odba.Table#
+ * @memberof vdba.Table#
  * @abstract
  *
  * @param {Object} where        The condition.
@@ -1756,13 +1756,13 @@ Table.prototype.remove = function remove() {
 };
 
 /**
- * The odba package.
+ * The vdba package.
  *
- * @namespace odba
+ * @namespace vdba
  */
-Object.defineProperty(window, "odba", {value: {}, enumerable: true});
+Object.defineProperty(window, "vdba", {value: {}, enumerable: true});
 
-Object.defineProperty(odba, "util", {
+Object.defineProperty(vdba, "util", {
   value: {
     inherits: function inherits(child, parent) {
       child.super_ = parent;
@@ -1793,16 +1793,16 @@ Object.defineProperty(odba, "util", {
   }
 });
 
-Object.defineProperty(odba, "Combinator", {value: Combinator, enumerable: true});
-Object.defineProperty(odba, "Connection", {value: Connection, enumerable: true});
-Object.defineProperty(odba, "Database", {value: Database, enumerable: true});
-Object.defineProperty(odba, "Driver", {value: Driver, enumerable: true});
-Object.defineProperty(odba, "Index", {value: Index, enumerable: true});
-Object.defineProperty(odba, "Mapper", {value: Mapper, enumerable: true});
-Object.defineProperty(odba, "Query", {value: Query, enumerable: true});
-Object.defineProperty(odba, "Result", {value: Result, enumerable: true});
-Object.defineProperty(odba, "ResultFilter", {value: ResultFilter, enumerable: true});
-Object.defineProperty(odba, "Server", {value: Server, enumerable: true});
-Object.defineProperty(odba, "Table", {value: Table, enumerable: true});
+Object.defineProperty(vdba, "Combinator", {value: Combinator, enumerable: true});
+Object.defineProperty(vdba, "Connection", {value: Connection, enumerable: true});
+Object.defineProperty(vdba, "Database", {value: Database, enumerable: true});
+Object.defineProperty(vdba, "Driver", {value: Driver, enumerable: true});
+Object.defineProperty(vdba, "Index", {value: Index, enumerable: true});
+Object.defineProperty(vdba, "Mapper", {value: Mapper, enumerable: true});
+Object.defineProperty(vdba, "Query", {value: Query, enumerable: true});
+Object.defineProperty(vdba, "Result", {value: Result, enumerable: true});
+Object.defineProperty(vdba, "ResultFilter", {value: ResultFilter, enumerable: true});
+Object.defineProperty(vdba, "Server", {value: Server, enumerable: true});
+Object.defineProperty(vdba, "Table", {value: Table, enumerable: true});
 
 })();

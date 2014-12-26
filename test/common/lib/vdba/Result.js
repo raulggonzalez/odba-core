@@ -1,5 +1,5 @@
-describe("odba.Result", function() {
-  var Result = odba.Result;
+describe("vdba.Result", function() {
+  var Result = vdba.Result;
 
   var rows = [
     {userId: 1, username: "user01", password: "pwd01"},

@@ -1,5 +1,5 @@
-describe("odba.Driver", function() {
-  var Driver = odba.Driver;
+describe("vdba.Driver", function() {
+  var Driver = vdba.Driver;
 
   describe("#register()", function() {
     describe("Error handling", function() {

@@ -1,1 +1,1 @@
-global.odba = require("../../node-odba-core");
+global.vdba = require("../../node-vdba-core");

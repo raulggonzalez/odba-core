@@ -1,6 +1,6 @@
-describe("odba.Mapper", function() {
-  var Result = odba.Result;
-  var mapper = new odba.Mapper();
+describe("vdba.Mapper", function() {
+  var Result = vdba.Result;
+  var mapper = new vdba.Mapper();
 
   function User() {}
 

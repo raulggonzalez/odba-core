@@ -1,6 +1,6 @@
-describe("odba.ResultFilter", function() {
-  var Result = odba.Result;
-  var filter = new odba.ResultFilter();
+describe("vdba.ResultFilter", function() {
+  var Result = vdba.Result;
+  var filter = new vdba.ResultFilter();
   var rows = [
     {userId: 1, username: "user01", password: "pwd01"},
     {userId: 2, username: "user02", password: "pwd02"},

@@ -1,14 +1,15 @@
-# odba-core
+# vdba-core
 
-`ODBA` (Open Database API) is an asynchronous API for the JavaScript language
+`VDBA` (Valencia Database API) is an asynchronous API for the JavaScript language
 that programmers can use to access data such as databases.
-The ODBA philosophy is similar to the `Node.js` API's.
+The VDBA philosophy is similar to the `Node.js` API's.
 
 Implementations:
 
-  - `indexeddb-odba-driver` for IndexedDB in the browser.
-  - `cassandra-odba-driver` for C* in `Node.js` (coming soon).
-  - `postgresql-odba-driver` for PostgreSQL in `Node.js` (coming soon).
+  - `cassandra-vdba-driver` for C* in `Node.js` (coming soon).
+  - `indexeddb-vdba-driver` for IndexedDB in the browser.
+  - `postgresql-vdba-driver` for PostgreSQL in `Node.js` (coming soon).
+  - `sqlite-vdba-driver` for SQLite in `Node.js`.
 
 The API documentation is available in `doc/api.html.zip`.
 

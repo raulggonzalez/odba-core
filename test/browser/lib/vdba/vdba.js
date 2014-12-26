@@ -1,4 +1,4 @@
-describe("odba - Browser", function() {
+describe("vdba - Browser", function() {
   describe("Namespacing", function() {
     it("!window.Combinator", function() {
       window.should.not.have.property("Combinator");
