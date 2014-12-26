@@ -1,4 +1,4 @@
-/*! odba-core - 0.4.1 (2014-12-21) */
+/*! odba-core - 0.5.0 (2014-12-26) */
 
 (function() {
 
@@ -562,6 +562,149 @@ Index.prototype.__defineGetter__("unique", function() {
 });
 
 /**
+ * A mapper.
+ *
+ * @class odba.Mapper
+ * @protected
+ */
+function Mapper() {
+
+}
+
+/**
+ * Maps the rows as indicated.
+ *
+ * @name map
+ * @function
+ * @memberof odba.Mapper#
+ *
+ * @param {Object|String[]|Function} map  How to map.
+ * @param {odba.Result|Object[]} rows     The rows or the result to cast.
+ *
+ * @returns {Object[]}
+ */
+Mapper.prototype.map = function(map, rows) {
+  var res;
+
+  //(1) map
+  if (rows instanceof odba.Result) {
+    res = this.mapResult(map, rows);
+  } else {
+    res = this.mapRows(map, rows);
+  }
+
+  //(2) return result
+  return res;
+};
+
+/**
+ * @private
+ */
+Mapper.prototype.mapRows = function(map, rows) {
+  var res = [];
+
+  //(1) map
+  for (var i = 0; i < rows.length; ++i) {
+    res.push(this.mapRow(map, rows[i]));
+  }
+
+  //(2) return result
+  return res;
+};
+
+/**
+ * @private
+ */
+Mapper.prototype.mapResult = function(map, result) {
+  var res;
+
+  //(1) create result
+  res = new result.constructor([], result.options);
+
+  //(2) map
+  for (var i = 0; i < result.length; ++i) {
+    res.rows.push(this.mapRow(map, result.rows[i]));
+  }
+
+  //(3) return result
+  return res;
+};
+
+/**
+ * Maps a row.
+ *
+ * @name mapRow
+ * @function
+ * @memberof odba.Mapper#
+ *
+ * @param {Object|String[]|Function} map  How to map.
+ * @param {Object} row                    The row to cast.
+ *
+ * @returns {Object}
+ */
+Mapper.prototype.mapRow = function(map, row) {
+  var instance;
+
+  //(1) cast as needed
+  if (map instanceof Function) {
+    instance = this.customMap(map, row);
+  } else if (map instanceof Array) {
+    instance = this.defaultMap({map: map}, row);
+  } else if (map instanceof Object) {
+    instance = this.defaultMap(map, row);
+  } else {
+    instance = row;
+  }
+
+  //(2) return instance
+  return instance;
+};
+
+/**
+ * @private
+ */
+Mapper.prototype.defaultMap = function(map, row) {
+  var instance, Class, mapping;
+
+  //(1) prepare
+  Class = (map.clss || Object);
+  mapping = (map.map || {});
+
+  if (typeof(mapping) == "string") {
+    mapping = [mapping];
+  }
+
+  if (mapping instanceof Array) {
+    var aux = {};
+
+    for (var i = 0; i < mapping.length; ++i) {
+      var field = mapping[i];
+      aux[field.toLowerCase()] = field;
+    }
+
+    mapping = aux;
+  }
+
+  //(2) create instance
+  instance = Object.create(Class.prototype);
+
+  //(3) initialize instance
+  for (var key in row) {
+    instance[mapping[key] || key] = row[key];
+  }
+
+  //(4) return instance
+  return instance;
+};
+
+/**
+ * @private
+ */
+Mapper.prototype.customMap = function(map, row) {
+  return map(row);
+};
+
+/**
  * A query.
  *
  * @class odba.Query
@@ -586,6 +729,36 @@ Query.prototype.findAll = function findAll() {
 };
 
 /**
+ * findAll() with casting.
+ *
+ * @name findAll
+ * @function
+ * @memberof odba.Query#
+ *
+ * @param {Object|Function|String[]} map  The mapping.
+ * @param {Function} callback             The function to call: fn(error, result).
+ */
+Query.prototype.mapAll = function mapAll(map, callback) {
+  //(1) pre: arguments
+  if (!map) {
+    throw new Error("Map expected.");
+  }
+
+  if (!callback) {
+    throw new Error("Callback expected.");
+  }
+
+  //(2) find and map
+  this.findAll(function(error, result) {
+    if (error) {
+      callback(error);
+    } else {
+      callback(undefined, new odba.Mapper().map(map, result));
+    }
+  });
+};
+
+/**
  * Runs the query.
  *
  * @name find
@@ -601,16 +774,66 @@ Query.prototype.find = function find() {
 };
 
 /**
+ * find() with casting.
+ *
+ * @name map
+ * @function
+ * @memberof odba.Query#
+ * @abstract
+ *
+ * @param {Object|Function|String[]} map  The mapping.
+ * @param {Object} [filter]               The condition.
+ * @param {Function} callback             The function to call: fn(error, result).
+ */
+Query.prototype.map = function(map, filter, callback) {
+  //(1) pre: arguments
+  if (!map) {
+    throw new Error("Map expected.");
+  }
+
+  if (arguments.length == 2) {
+    callback = arguments[1];
+    filter = undefined;
+  }
+
+  //(2) find and map
+  this.find(filter, function(error, result) {
+    if (error) {
+      callback(error);
+    } else {
+      callback(undefined, new odba.Mapper().map(map, result));
+    }
+  });
+};
+
+/**
  * Runs the query.
  *
  * @name findOne
  * @function
  * @memberof odba.Query#
+ * @abstract
  *
  * @param {Object} [filter]   The filter object.
  * @param {Function} callback The function to call: fn(error, record).
  */
 Query.prototype.findOne = function findOne() {
+  throw new Error("Abstract method.");
+};
+
+/**
+ * findOne() with casting.
+ *
+ * @name mapOne
+ * @function
+ * @memberof odba.Query#
+ * @abstract
+ *
+ * @param {Object|Function|String[]} map  The mapping.
+ * @param {Object} [filter]               The filter object.
+ * @param {Function} callback             The function to call: fn(error, record).
+ */
+Query.prototype.mapOne = function mapOne(){
   throw new Error("Abstract method.");
 };
 
@@ -649,17 +872,27 @@ Query.prototype.join = function join() {
  *
  * @class odba.Result
  *
- * @param {Array} rows  The rows.
+ * @param {Array} rows        The rows.
+ * @param {Object} [options]  The options.
  */
-function Result(rows) {
+function Result(rows, options) {
   /**
    * The rows.
    *
    * @name rows
-   * @type {odba.Object[]}
+   * @type {Object[]}
    * @memberof odba.Result#
    */
   Object.defineProperty(this, "rows", {value: rows});
+
+  /**
+   * The result options.
+   *
+   * @name options
+   * @type {Object}
+   * @memberof odba.Result#
+   */
+  Object.defineProperty(this, "options", {value: options || {}});
 }
 
 /**
@@ -680,10 +913,29 @@ Result.prototype.__defineGetter__("length", function() {
  * @function
  * @memberof odba.Result#
  *
- * @param {Object} where  The restriction condition.
+ * @param {Object} [where]  The restriction condition.
+ *
+ * @returns {Object[]}
  */
 Result.prototype.find = function find(where) {
   return new odba.ResultFilter().find(this, where);
+};
+
+/**
+ * Returns the rows satisfying the restriction casted as
+ * indicated.
+ *
+ * @name map
+ * @function
+ * @memberof odba.Result#
+ *
+ * @param {Object} map      The mapping.
+ * @param {Object} [where]  The restriction condition.
+ *
+ * @returns {Object[]}
+ */
+Result.prototype.map = function(map, where) {
+  return new odba.Mapper().map(map, this.find(where));
 };
 
 /**
@@ -1141,8 +1393,12 @@ Table.prototype.__defineGetter__("name", function() {
  */
 Table.prototype.hasIndex = function hasIndex(name, callback) {
   //(1) arguments
-  if (arguments.length < 2) {
-    throw new Error("Index name and callback expected.");
+  if (!name) {
+    throw new Error("Index name expected.");
+  }
+
+  if (!callback) {
+    throw new Error("Callback expected.");
   }
 
   //(2) check
@@ -1225,18 +1481,68 @@ Table.prototype.dropIndex = function dropIndex(name, callback) {
 };
 
 /**
+ * Returns a query object.
+ *
+ * @name query
+ * @function
+ * @memberof odba.Table#
+ * @protected
+ * @abstract
+ *
+ * @returns {odba.Query}
+ */
+Table.prototype.query = function query() {
+  throw new Error("Abstract method.");
+};
+
+/**
  * Returns zero, one or several rows.
  *
  * @name find
  * @function
  * @memberof odba.Table#
- * @abstract
  *
- * @param {Object} where      The condition.
+ * @param {Object} filter     The condition.
  * @param {Function} callback The function to call: fn(error, result).
  */
-Table.prototype.find = function find() {
-  throw new Error("Abstract method.");
+Table.prototype.find = function find(filter, callback) {
+  //(1) pre: arguments
+  if (arguments.length == 1) {
+    callback = arguments[0];
+    filter = undefined;
+  }
+
+  if (!callback) {
+    throw new Error("Callback expected.");
+  }
+
+  //(2) find
+  this.query().find(filter, callback);
+};
+
+/**
+ * find() with casting.
+ *
+ * @name map
+ * @function
+ * @memberof odba.Table#
+ *
+ * @param {Object|Function|String[]} map  The mapping.
+ * @param {Object} [filter]               The condition.
+ * @param {Function} callback             The function to call: fn(error, result).
+ */
+Table.prototype.map = function(map, filter, callback) {
+  //(1) pre: arguments
+  if (arguments.length == 2) {
+    callback = arguments[1];
+    filter = undefined;
+  }
+
+  if (!map) throw new Error("Map expected.");
+  if (!callback) throw new Error("Callback expected.");
+
+  //(2) map
+  this.query().map(map, filter, callback);
 };
 
 /**
@@ -1245,12 +1551,34 @@ Table.prototype.find = function find() {
  * @name findAll
  * @function
  * @memberof odba.Table#
- * @abstract
  *
  * @param {Function} callback The function to call: fn(error, result).
  */
-Table.prototype.findAll = function findAll() {
-  throw new Error("Abstract method.");
+Table.prototype.findAll = function findAll(callback) {
+  //(1) pre: arguments
+  if (!callback) throw new Error("Callback expected.");
+
+  //(2) find
+  this.query().find(callback);
+};
+
+/**
+ * findAll() with casting.
+ *
+ * @name mapAll
+ * @function
+ * @memberof odba.Table#
+ *
+ * @param {Object|Function|String[]} map  The mapping.
+ * @param {Function} callback             The function to call: fn(error, result).
+ */
+Table.prototype.mapAll = function mapAll(map, callback) {
+  //(1) pre: arguments
+  if (!map) throw new Error("Map expected.");
+  if (!callback) throw new Error("Callback expected.");
+
+  //(2) map
+  this.query().mapAll(map, callback);
 };
 
 /**
@@ -1259,13 +1587,44 @@ Table.prototype.findAll = function findAll() {
  * @name findOne
  * @function
  * @memberof odba.Table#
- * @abstract
  *
- * @param {Object} where      The condition.
+ * @param {Object} [filter]   The condition.
  * @param {Function} callback The function to call: fn(error, row).
  */
-Table.prototype.findOne = function findOne() {
-  throw new Error("Abstract method.");
+Table.prototype.findOne = function findOne(filter, callback) {
+  //(1) pre: arguments
+  if (arguments.length == 1) {
+    callback = arguments[0];
+    filter = undefined;
+  }
+
+  //(2) find
+  this.query().findOne(filter, callback);
+};
+
+/**
+ * findOne() with casting.
+ *
+ * @name mapOne
+ * @function
+ * @memberof odba.Table#
+ *
+ * @param {Object|Function|String[]} map  The mapping.
+ * @param {Object} [filter]               The condition.
+ * @param {Function} callback             The function to call: fn(error, row).
+ */
+Table.prototype.mapOne = function mapOne(map, filter, callback) {
+  //(1) pre: arguments
+  if (arguments.length == 2) {
+    callback = arguments[1];
+    filter = undefined;
+  }
+
+  if (!map) throw new Error("Map expected.");
+  if (!callback) throw new Error("Callback expected.");
+
+  //(2) map
+  this.query().mapOne(map, filter, callback);
 };
 
 /**
@@ -1288,7 +1647,6 @@ Table.prototype.count = function count() {
  * @name join
  * @function
  * @memberof odba.Table#
- * @abstract
  *
  * @param {String|odba.Table} target  The target table name.
  * @param {String} col1               The source column.
@@ -1298,8 +1656,27 @@ Table.prototype.count = function count() {
  * @returns {odba.Query} If the call doesn't pass a callback, it returns a Query;
  *                       otherwise, asynchronous call.
  */
-Table.prototype.join = function join() {
-  throw new Error("Abstract method.");
+Table.prototype.join = function join(target, col1, col2, callback) {
+  //(1) pre: arguments
+  if (arguments.length == 3) {
+    if (arguments[2] instanceof Function) {
+      callback = arguments[2];
+      col2 = undefined;
+    }
+  }
+
+  if (!col2) col2 = col1;
+
+  if (!target) throw new Error("Target table expected.");
+  if (!col1) throw new Error("Source column expected.");
+  if (!col2) throw new Error("Target column expected.");
+
+  //(2) join or return
+  if (callback) {
+    this.query().join(target, col1, col2, callback);
+  } else {
+    return this.query().join(target, col1, col2);
+  }
 };
 
 /**
@@ -1421,6 +1798,7 @@ Object.defineProperty(odba, "Connection", {value: Connection, enumerable: true})
 Object.defineProperty(odba, "Database", {value: Database, enumerable: true});
 Object.defineProperty(odba, "Driver", {value: Driver, enumerable: true});
 Object.defineProperty(odba, "Index", {value: Index, enumerable: true});
+Object.defineProperty(odba, "Mapper", {value: Mapper, enumerable: true});
 Object.defineProperty(odba, "Query", {value: Query, enumerable: true});
 Object.defineProperty(odba, "Result", {value: Result, enumerable: true});
 Object.defineProperty(odba, "ResultFilter", {value: ResultFilter, enumerable: true});

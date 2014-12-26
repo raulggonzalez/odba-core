@@ -7,49 +7,6 @@ module.exports = function(grunt) {
   grunt.config.init({
     pkg: grunt.file.readJSON("package.json"),
 
-    jshint: {
-      grunt: {
-        files: {
-          src: ["Gruntfile.js"]
-        }
-      },
-
-      test: {
-        options: {
-          ignores: [
-            "test/vendor/**",
-            "test/mocha.opts",
-            "test/browser/index.html",
-            "test/browser/index.min.html"
-          ]
-        },
-
-        files: {
-          src: ["test/**"]
-        }
-      },
-
-      browser: {
-        options: {
-          jshintrc: true
-        },
-
-        files: {
-          src: ["browser-odba-core.js"]
-        }
-      },
-
-      node: {
-        options: {
-          jshintrc: true
-        },
-
-        files: {
-          src: ["node-odba-core.js"]
-        }
-      }
-    },
-
     clean: {
       doc: {
         src: ["doc/api/"]
@@ -109,9 +66,58 @@ module.exports = function(grunt) {
       }
     },
 
+    jshint: {
+      browser: {
+        options: {
+          jshintrc: true
+        },
+
+        files: {
+          src: ["browser-odba-core.js"]
+        }
+      },
+
+      grunt: {
+        files: {
+          src: ["Gruntfile.js"]
+        }
+      },
+
+      lib: {
+        files: {
+          src: ["lib/**"]
+        }
+      },
+
+      node: {
+        options: {
+          jshintrc: true
+        },
+
+        files: {
+          src: ["node-odba-core.js"]
+        }
+      },
+
+      test: {
+        options: {
+          ignores: [
+            "test/vendor/**",
+            "test/mocha.opts",
+            "test/browser/index.html",
+            "test/browser/index.min.html"
+          ]
+        },
+
+        files: {
+          src: ["test/**"]
+        }
+      }
+    },
+
     test: {
       host: "localhost",
-      port: 51792,
+      port: 50130,
       chromeFolder: "C:\\Program Files (x86)\\Google\\Chrome\\Application",
       firefoxFolder: "C:\\Program Files (x86)\\Mozilla Firefox",
       app: "http://<%= test.host %>:<%= test.port %>/<%= pkg.name %>",
@@ -192,7 +198,9 @@ module.exports = function(grunt) {
     "jshint:browser",
     "uglify:browser",
     "test:chrome",
-    "test:chrome:min"
+    "test:chrome:min",
+    "test:firefox",
+    "test:firefox:min"
   ]);
 
   grunt.registerTask("node", "Generates node-odba-core.", [
@@ -212,6 +220,7 @@ module.exports = function(grunt) {
   grunt.registerTask("all", "Generates browser and Node modules.", [
     "jshint:grunt",
     "jshint:test",
+    "jshint:lib",
     "browser",
     "node",
     "api.html.zip"
