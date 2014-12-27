@@ -115,6 +115,19 @@ module.exports = function(grunt) {
       }
     },
 
+    mochaTest:{
+      options: {
+        ignoreLeaks: false,
+        quiet: false,
+        reporter: "dot",
+        require: ["should"]
+      },
+
+      node: {
+        src: ["test/node/**.js", "test/common/**/*.js"]
+      }
+    },
+
     test: {
       host: "localhost",
       port: 51792,
@@ -165,12 +178,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-contrib-jshint");
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-jsdoc");
+  grunt.loadNpmTasks("grunt-mocha-test");
 
   //(3) define tasks
-  grunt.registerTask("test", "Perform the unit testing.", function test(target, type) {
+  grunt.registerTask("testBrowser", "Perform the browser unit testing.", function test(target, type) {
     var chrome = (target == "chrome");
     var firefox = (target == "firefox");
-    var node = (target == "node");
     var index = grunt.config.get(type == "min" ? "test.minIndex" : "test.index");
 
     if (chrome) {
@@ -182,32 +195,23 @@ module.exports = function(grunt) {
       process.env.PATH += ";" + grunt.config.get("test.firefoxFolder");
       child_process.exec("firefox -new-window " + index, undefined, this.async());
     }
-
-    if (node) {
-      var done = this.async();
-      var ps = child_process.exec("mocha test/node test/common", function(error, stdout, stderr) {
-        grunt.log.writeln(stdout);
-        grunt.log.writeln(stderr);
-        done(error);
-      });
-    }
   });
 
   grunt.registerTask("browser", "Generates browser-vdba-core.", [
     "concat:browser",
     "jshint:browser",
     "uglify:browser",
-    "test:chrome",
-    "test:chrome:min",
-    "test:firefox",
-    "test:firefox:min"
+    "testBrowser:chrome",
+    "testBrowser:chrome:min",
+    "testBrowser:firefox",
+    "testBrowser:firefox:min"
   ]);
 
   grunt.registerTask("node", "Generates node-vdba-core.", [
     "concat:node",
     "jshint:node",
     "uglify:node",
-    "test:node"
+    "mochaTest:node"
   ]);
 
   grunt.registerTask("api.html.zip", "Generates the API doc.", [

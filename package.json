@@ -1,6 +1,6 @@
 {
   "name": "vdba-core",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "VDBA (Valencia DB API) core.",
   "author": "Raúl G. González <raulggonzalezsw@outlook.com>",
   "keywords": [
@@ -26,6 +26,8 @@
     "grunt-contrib-copy": "^0.7.0",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-uglify": "^0.6.0",
-    "grunt-jsdoc": "^0.6.1"
+    "grunt-jsdoc": "^0.6.1",
+    "grunt-mocha-test": "^0.12.4",
+    "mocha": "^2.1.0"
   }
 }

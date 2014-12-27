@@ -1,4 +1,4 @@
-/*! vdba-core - 0.6.1 (2014-12-26) */
+/*! vdba-core - 0.6.2 (2014-12-27) */
 
 (function() {
 
@@ -65,8 +65,9 @@ function Connection(config) {
    * @name config
    * @type {Object}
    * @memberof vdba.Connection#
+   * @protected
    */
-  Object.defineProperty(this, "config", {value: config, enumerable: true});
+  Object.defineProperty(this, "config", {value: config});
 }
 
 /**
@@ -484,19 +485,10 @@ Driver.prototype.createConnection = function createConnection() {
 Driver.prototype.openConnection = function openConnection(config, callback) {
   var cx;
 
-  //(1) pre: arguments
-  if (!config) {
-    throw new Error("Configuration expected.");
-  }
-
-  if (!callback) {
-    throw new Error("Callback expected.");
-  }
-
-  //(2) create connection
+  //(1) create connection
   cx = this.createConnection(config);
 
-  //(3) open connection
+  //(2) open connection
   cx.open(function(error) {
     if (error) callback(error);
     else callback(undefined, cx);
