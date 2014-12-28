@@ -6,10 +6,10 @@ The VDBA philosophy is similar to the `Node.js` API's.
 
 Implementations:
 
-  - `cassandra-vdba-driver` for C* in `Node.js` (coming soon).
+  - `cassandra-vdba-driver` for C* in `Node.js` (in development).
   - `indexeddb-vdba-driver` for IndexedDB in the browser.
   - `postgresql-vdba-driver` for PostgreSQL in `Node.js` (coming soon).
-  - `sqlite-vdba-driver` for SQLite in `Node.js`.
+  - `sqlite-vdba-driver` for SQLite in `Node.js` (in development).
 
 The API documentation is available in `doc/api.html.zip`.
 

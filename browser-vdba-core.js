@@ -1,4 +1,4 @@
-/*! vdba-core - 0.6.2 (2014-12-27) */
+/*! vdba-core - 0.7.0 (2014-12-28) */
 
 (function() {
 
@@ -55,6 +55,7 @@ Combinator.prototype.join = function join(source, target, sourceCol, targetCol, 
  *
  * @class vdba.Connection
  * @abstract
+ * @protected
  *
  * @param {Object} config The configuration.
  */
@@ -103,6 +104,18 @@ Connection.prototype.__defineGetter__("connected", function() {
  * @abstract
  */
 Connection.prototype.__defineGetter__("server", function() {
+  throw new Error("Abstract property.");
+});
+
+/**
+ * The current database.
+ *
+ * @name database
+ * @type {vdba.Database}
+ * @memberof vdba.Connection#
+ * @abstract
+ */
+Connection.prototype.__defineGetter__("database", function() {
   throw new Error("Abstract property.");
 });
 
@@ -166,22 +179,20 @@ Connection.prototype.runTransaction = function runTransaction() {
  *
  * @class vdba.Database
  * @abstract
- */
-function Database() {
-
-}
-
-/**
- * The database name.
+ * @protected
  *
- * @name name
- * @type {String}
- * @memberof vdba.Database#
- * @abstract
+ * @param {String} name The database name.
  */
-Database.prototype.__defineGetter__("name", function() {
-  throw new Error("Abstract property.");
-});
+function Database(name) {
+  /**
+   * The database name.
+   *
+   * @name name
+   * @type {String}
+   * @memberof vdba.Database#
+   */
+  Object.defineProperty(this, "name", {value: name, enumerable: true});
+}
 
 /**
  * Does the table exist?
@@ -367,10 +378,17 @@ Database.prototype.dropIndex = function dropIndex() {
  *
  * @class vdba.Driver
  * @abstract
+ * @protected
  *
- * @param {String} name The driver name.
+ * @param {String} name               The driver name.
+ * @param {String|String[]} [aliases] The driver aliases.
  */
-function Driver(name) {
+function Driver(name, aliases) {
+  //(1) pre: arguments
+  if (!aliases) aliases = [];
+  else if (typeof(aliases) == "string") aliases = [aliases];
+
+  //(2) initialize instance
   /**
    * The driver name.
    *
@@ -379,6 +397,15 @@ function Driver(name) {
    * @memberof vdba.Driver#
    */
   Object.defineProperty(this, "name", {value: name, enumerable: true});
+
+  /**
+   * The driver aliases.
+   *
+   * @name aliases
+   * @type {String[]}
+   * @memberof vdba.Driver#
+   */
+  Object.defineProperty(this, "aliases", {value: aliases, enumerable: true});
 }
 
 /**
@@ -424,13 +451,11 @@ Driver.getDriver = function getDriver(name) {
  * @memberof vdba.Driver
  *
  * @param {vdba.Driver} driver      The driver.
- * @param {String|String[]} [alias] The driver alias.
  *
  * @example
  * vdba.Driver.register(new IndexedDBDriver());
- * vdba.Driver.register(new CassandraDriver(), "C*");
  */
-Driver.register = function register(driver, alias) {
+Driver.register = function register(driver) {
   var cache = vdba.Driver.cache;
 
   //(1) pre: arguments
@@ -442,12 +467,8 @@ Driver.register = function register(driver, alias) {
   //(2) register
   cache[driver.name.toLowerCase()] = driver;
 
-  if (alias) {
-    if (typeof(alias) == "string") alias = [alias];
-
-    for (var i = 0; i < alias.length; ++i) {
-      cache[alias[i].toLowerCase()] = driver;
-    }
+  for (var i = 0, aliases = driver.aliases; i < aliases.length; ++i) {
+    cache[aliases[i].toLowerCase()] = driver;
   }
 };
 
@@ -484,6 +505,10 @@ Driver.prototype.createConnection = function createConnection() {
  */
 Driver.prototype.openConnection = function openConnection(config, callback) {
   var cx;
+
+  //(1) arguments
+  if (!config) throw new Error("Configuration expected.");
+  if (!callback) throw new Error("Callback expected.");
 
   //(1) create connection
   cx = this.createConnection(config);
@@ -1271,6 +1296,7 @@ ResultFilter.prototype.$notIn = function $notIn(row, prop, value) {
  *
  * @class vdba.Server
  * @abstract
+ * @protected
  */
 function Server() {
 
@@ -1360,34 +1386,30 @@ Server.prototype.dropDatabase = function dropDatabase() {
  *
  * @class vdba.Table
  * @abstract
+ * @protected
+ *
+ * @param {vdba.Database} db  The database.
+ * @param {String} name       The table name.
  */
-function Table() {
+function Table(db, name) {
+  /**
+   * The database object.
+   *
+   * @name database
+   * @type {vdba.Database}
+   * @memberof vdba.Table#
+   */
+  Object.defineProperty(this, "database", {value: db, enumerable: true});
 
+  /**
+   * The table name.
+   *
+   * @name name
+   * @type {String}
+   * @memberof vdba.Table#
+   */
+  Object.defineProperty(this, "name", {value: name, enumerable: true});
 }
-
-/**
- * The database object.
- *
- * @name database
- * @type {vdba.Database}
- * @memberof vdba.Table#
- * @abstract
- */
-Table.prototype.__defineGetter__("database", function() {
-  throw new Error("Abstract method.");
-});
-
-/**
- * The table name.
- *
- * @name name
- * @type {String}
- * @memberof vdba.Table#
- * @abstract
- */
-Table.prototype.__defineGetter__("name", function() {
-  throw new Error("Abstract method.");
-});
 
 /**
  * Checks whether an index exists.

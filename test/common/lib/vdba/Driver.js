@@ -29,10 +29,10 @@ describe("vdba.Driver", function() {
       Driver.cache.indexeddb.should.be.exactly(drv);
     });
 
-    it("register(Cassandra, alias)", function() {
-      var drv = new Driver("Cassandra");
+    it("register(Cassandra)", function() {
+      var drv = new Driver("Cassandra", "C*");
 
-      Driver.register(drv, "C*");
+      Driver.register(drv);
       Driver.cache.cassandra.should.be.exactly(drv);
       Driver.cache["c*"].should.be.exactly(drv);
     });
