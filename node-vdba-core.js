@@ -1,4 +1,4 @@
-/*! vdba-core - 0.7.0 (2014-12-28) */
+/*! vdba-core - 0.8.0 (2014-12-29) */
 
 (function() {
 
@@ -257,6 +257,7 @@ Database.prototype.findTable = function findTable() {
  * @abstract
  *
  * @param {String} name         The table name.
+ * @param {Object} [columns]    The columns.
  * @param {Object} [options]    The creation options.
  * @param {Function} [callback] The function to call: fn(error, table).
  */
