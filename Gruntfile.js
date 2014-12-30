@@ -221,7 +221,7 @@ module.exports = function(grunt) {
     "clean:doc",
   ]);
 
-  grunt.registerTask("all", "Generates browser and Node modules.", [
+  grunt.registerTask("default", "All.", [
     "jshint:grunt",
     "jshint:test",
     "jshint:lib",
