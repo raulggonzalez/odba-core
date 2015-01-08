@@ -1,6 +1,6 @@
 {
   "name": "vdba-core",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "VDBA (Valencia DB API) core.",
   "author": "Raúl G. González <raulggonzalezsw@outlook.com>",
   "keywords": [

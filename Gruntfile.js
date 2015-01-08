@@ -84,6 +84,14 @@ module.exports = function(grunt) {
       },
 
       lib: {
+        options: {
+          jshintrc: true,
+          ignores: [
+            "lib/browser-api.js",
+            "lib/node-api.js"
+          ]
+        },
+
         files: {
           src: ["lib/**"]
         }
@@ -119,7 +127,7 @@ module.exports = function(grunt) {
       options: {
         ignoreLeaks: false,
         quiet: false,
-        reporter: "dot",
+        reporter: "spec",
         require: ["should"]
       },
 
@@ -156,15 +164,59 @@ module.exports = function(grunt) {
         preserveComments: false
       },
 
-      browser: {
+      "browser-type1": {
+        options: {
+          compress: {
+            global_defs: {
+              SPEC_TYPE: 1
+            }
+          }
+        },
+
         files: {
-          "browser-vdba-core.min.js": ["browser-vdba-core.js"]
+          "browser-type1-vdba-core.min.js": ["browser-vdba-core.js"]
         }
       },
 
-      node: {
+      "browser-type2": {
+        options: {
+          compress: {
+            global_defs: {
+              SPEC_TYPE: 2
+            }
+          }
+        },
+
         files: {
-          "node-vdba-core.min.js": ["node-vdba-core.js"]
+          "browser-type2-vdba-core.min.js": ["browser-vdba-core.js"]
+        }
+      },
+
+      "node-type1": {
+        options: {
+          compress: {
+            global_defs: {
+              SPEC_TYPE: 1
+            }
+          }
+        },
+
+        files: {
+          "node-type1-vdba-core.min.js": ["node-vdba-core.js"]
+        }
+      },
+
+      "node-type2": {
+        options: {
+          compress: {
+            global_defs: {
+              SPEC_TYPE: 2
+            }
+          }
+        },
+
+        files: {
+          "node-type2-vdba-core.min.js": ["node-vdba-core.js"]
         }
       }
     }
@@ -174,7 +226,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-contrib-clean");
   grunt.loadNpmTasks("grunt-contrib-compress");
   grunt.loadNpmTasks("grunt-contrib-concat");
-  //grunt.loadNpmTasks("grunt-contrib-copy");
+  grunt.loadNpmTasks("grunt-contrib-copy");
   grunt.loadNpmTasks("grunt-contrib-jshint");
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-jsdoc");
@@ -200,7 +252,8 @@ module.exports = function(grunt) {
   grunt.registerTask("browser", "Generates browser-vdba-core.", [
     "concat:browser",
     "jshint:browser",
-    "uglify:browser",
+    "uglify:browser-type1",
+    "uglify:browser-type2",
     "testBrowser:chrome",
     "testBrowser:chrome:min",
     "testBrowser:firefox",
@@ -208,9 +261,11 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask("node", "Generates node-vdba-core.", [
+    "jshint:lib",
     "concat:node",
     "jshint:node",
-    "uglify:node",
+    "uglify:node-type1",
+    "uglify:node-type2",
     "mochaTest:node"
   ]);
 

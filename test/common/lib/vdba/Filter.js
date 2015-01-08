@@ -1,18 +1,21 @@
-describe("vdba.ResultFilter", function() {
-  var Result = vdba.Result;
-  var filter = new vdba.ResultFilter();
-  var rows = [
-    {userId: 1, username: "user01", password: "pwd01"},
-    {userId: 2, username: "user02", password: "pwd02"},
-    {userId: 3, username: "user03", password: "pwd03"},
-    {userId: 4, username: "usr04", password: "pwd04"},
-    {userId: 5, username: "usr05", password: "pwd05"},
-    {userId: 6, username: "usr06", password: "pwd06"},
-    {userId: 7, username: "UsEr07", password: undefined},
-    {userId: 8, username: "UsEr08", password: undefined},
-    {userId: 9, username: "UsR09", password: null},
-    {userId: 10, username: "UsR10", password: null}
-  ];
+describe("vdba.Filter", function() {
+  var filter = vdba.Filter.filter;
+  var rows;
+
+  beforeEach(function() {
+    rows = [
+      {userId: 1, username: "user01", password: "pwd01", createDate: new Date(2015, 1, 8), nicks: ["usr01", "u01"]},
+      {userId: 2, username: "user02", password: "pwd02", },
+      {userId: 3, username: "user03", password: "pwd03"},
+      {userId: 4, username: "usr04", password: "pwd04"},
+      {userId: 5, username: "usr05", password: "pwd05"},
+      {userId: 6, username: "usr06", password: "pwd06"},
+      {userId: 7, username: "UsEr07", password: undefined},
+      {userId: 8, username: "UsEr08", password: undefined},
+      {userId: 9, username: "UsR09", password: null},
+      {userId: 10, username: "UsR10", password: null}
+    ];
+  });
 
   describe("Operators", function() {
     describe("#$eq", function() {
@@ -306,10 +309,74 @@ describe("vdba.ResultFilter", function() {
         filter.$notIn(rows[9], "password", [0, null, 2]).should.be.eql(false);
       });
     });
+
+    describe("#$contains()", function() {
+      it("$contains(row, prop, value) : true - Array", function() {
+        filter.$contains(rows[0], "nicks", "u01").should.be.eql(true);
+      });
+
+      it("$contains(row, prop, value) : false - Array", function() {
+        filter.$contains(rows[0], "nicks", "xxxxx").should.be.eql(false);
+      });
+
+      it("$contains(row, prop, value) : true - String", function() {
+        filter.$contains(rows[0], "username", "r").should.be.eql(true);
+      });
+
+      it("$contains(row, prop, value) : false - String", function() {
+        filter.$contains(rows[0], "username", "xxxxx").should.be.eql(false);
+      });
+
+      it("$contains(row, 'unknown', value)", function() {
+        filter.$contains(rows[0], "unknown", "yyyyy").should.be.eql(false);
+      });
+
+      it("$contains(row, prop, value) - Another property type", function() {
+        filter.$contains(rows[0], "createDate", "xxx").should.be.eql(false);
+      });
+    });
+
+    describe("#$notContains()", function() {
+      it("$notContains(row, prop, value) : false - Array", function() {
+        filter.$notContains(rows[0], "nicks", "u01").should.be.eql(false);
+      });
+
+      it("$notContains(row, prop, value) : true - Array", function() {
+        filter.$notContains(rows[0], "nicks", "xxxxx").should.be.eql(true);
+      });
+
+      it("$notContains(row, prop, value) : false - String", function() {
+        filter.$notContains(rows[0], "username", "r").should.be.eql(false);
+      });
+
+      it("$notContains(row, prop, value) : true - String", function() {
+        filter.$notContains(rows[0], "username", "xxxxx").should.be.eql(true);
+      });
+
+      it("$notContains(row, 'unknown', value)", function() {
+        filter.$notContains(rows[0], "unknown", "yyyyy").should.be.eql(true);
+      });
+
+      it("$notContains(row, prop, value) - Another property type", function() {
+        filter.$notContains(rows[0], "createDate", "xxx").should.be.eql(true);
+      });
+    });
   });
 
   describe("#checkop()", function() {
-    var row = rows[0];
+    var row;
+
+    beforeEach(function() {
+      row = rows[0];
+    });
+
+    describe("Error handling", function() {
+      it("checkOp(row, prop, '$unknown', filter)", function() {
+        (function() {
+          filter.checkOp(row, "userId", "$unknown", {$unknown: 1});
+        }).should.throwError("Unknown operator: '$unknown'.");
+      });
+    });
 
     it("checkOp(row, prop, '$eq', filter) : true", function() {
       filter.checkOp(row, "userId", "$eq", {$eq: 1}).should.be.eql(true);
@@ -375,6 +442,14 @@ describe("vdba.ResultFilter", function() {
       filter.checkOp(row, "username", "$notLike", {$notLike: "us*"}).should.be.eql(false);
     });
 
+    it("checkOp(row, prop, '$nlike', filter) : true", function() {
+      filter.checkOp(row, "username", "$nlike", {$nlike: "US*"}).should.be.eql(true);
+    });
+
+    it("checkOp(row, prop, '$nlike', filter) : false", function() {
+      filter.checkOp(row, "username", "$nlike", {$nlike: "us*"}).should.be.eql(false);
+    });
+
     it("checkOp(row, prop, '$in', filter) : true", function() {
       filter.checkOp(row, "userId", "$in", {$in: [0, 1, 2]}).should.be.eql(true);
     });
@@ -391,15 +466,45 @@ describe("vdba.ResultFilter", function() {
       filter.checkOp(row, "userId", "$notIn", {$notIn: [0, 1, 2]}).should.be.eql(false);
     });
 
-    it("checkOp(row, prop, '$unknown', filter)", function() {
-      (function() {
-        filter.checkOp(row, "userId", "$unknown", {$unknown: 1});
-      }).should.throwError("Unknown operator: '$unknown'.");
+    it("checkOp(row, prop, '$nin', filter) : true", function() {
+      filter.checkOp(row, "userId", "$nin", {$nin: [0, 2]}).should.be.eql(true);
+    });
+
+    it("checkOp(row, prop, '$nin', filter) : false", function() {
+      filter.checkOp(row, "userId", "$nin", {$nin: [0, 1, 2]}).should.be.eql(false);
+    });
+
+    it("checkOp(row, prop, '$contains', filter) : true", function() {
+      filter.checkOp(row, "nicks", "$contains", {$contains: "u01"}).should.be.eql(true);
+    });
+
+    it("checkOp(row, prop, '$contains', filter) : false", function() {
+      filter.checkOp(row, "nicks", "$contains", {$contains: "xxxxx"}).should.be.eql(false);
+    });
+
+    it("checkOp(row, prop, '$notContains', filter) : true", function() {
+      filter.checkOp(row, "nicks", "$notContains", {$notContains: "xxx"}).should.be.eql(true);
+    });
+
+    it("checkOp(row, prop, '$notContains', filter) : false", function() {
+      filter.checkOp(row, "nicks", "$notContains", {$notContains: "u01"}).should.be.eql(false);
+    });
+
+    it("checkOp(row, prop, '$ncontains', filter) : true", function() {
+      filter.checkOp(row, "nicks", "$ncontains", {$ncontains: "xxx"}).should.be.eql(true);
+    });
+
+    it("checkOp(row, prop, '$ncontains', filter) : false", function() {
+      filter.checkOp(row, "nicks", "$ncontains", {$ncontains: "u01"}).should.be.eql(false);
     });
   });
 
   describe("#check()", function() {
-    var row = rows[0];
+    var row;
+
+    beforeEach(function() {
+      row = rows[0];
+    });
 
     describe("Simple", function() {
       it("check(row, {})", function() {
@@ -574,23 +679,27 @@ describe("vdba.ResultFilter", function() {
     });
   });
 
-  describe("#find()", function() {
-    var result = new Result(rows);
+  describe("#filter()", function() {
+    var len;
 
-    it("find(result)", function() {
-      filter.find(result).should.be.eql(rows);
+    beforeEach(function() {
+      len = rows.length;
     });
 
-    it("find(result, {})", function() {
-      filter.find(result, {}).should.be.eql(rows);
+    it("filter(rows)", function() {
+      filter.filter(rows).length.should.be.eql(len);
     });
 
-    it("find(result, {prop: val})", function() {
-      filter.find(result, {userId: 1}).should.be.eql([rows[0]]);
+    it("filter(rows, {})", function() {
+      filter.filter(rows, {}).length.should.be.eql(len);
     });
 
-    it("find(result, {prop: {$like: val}}", function() {
-      filter.find(result, {username: {$like: "user*"}}).should.be.eql([rows[0], rows[1], rows[2]]);
+    it("filter(rows, {prop: val})", function() {
+      filter.filter(rows, {userId: 1}).length.should.be.eql(1);
+    });
+
+    it("filter(rows, {prop: {$like: val}}", function() {
+      filter.filter(rows, {username: {$like: "user*"}}).length.should.be.eql(3);
     });
   });
 });

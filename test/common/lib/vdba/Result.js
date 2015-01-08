@@ -1,20 +1,23 @@
 describe("vdba.Result", function() {
   var Result = vdba.Result;
+  var result, rows;
 
-  var rows = [
-    {userId: 1, username: "user01", password: "pwd01"},
-    {userId: 2, username: "user02", password: "pwd02"},
-    {userId: 3, username: "user03", password: "pwd03"},
-    {userId: 4, username: "usr04", password: "pwd04"},
-    {userId: 5, username: "usr05", password: "pwd05"},
-    {userId: 6, username: "usr06", password: "pwd06"},
-    {userId: 7, username: "UsEr07", password: undefined},
-    {userId: 8, username: "UsEr08", password: undefined},
-    {userId: 9, username: "UsR09", password: null},
-    {userId: 10, username: "UsR10", password: null}
-  ];
+  beforeEach(function() {
+    rows = [
+      {userId: 1, username: "user01", password: "pwd01", nick: "u01", emails: ["user01@test.com", "u01@test.com"]},
+      {userId: 2, username: "user02", password: "pwd02", nick: "u02", emails: ["user02@test.com"]},
+      {userId: 3, username: "user03", password: "pwd03"},
+      {userId: 4, username: "usr04", password: "pwd04"},
+      {userId: 5, username: "usr05", password: "pwd05"},
+      {userId: 6, username: "usr06", password: "pwd06"},
+      {userId: 7, username: "UsEr07", password: undefined},
+      {userId: 8, username: "UsEr08", password: undefined},
+      {userId: 9, username: "UsR09", password: null},
+      {userId: 10, username: "UsR10", password: null}
+    ];
 
-  var result = new Result(rows);
+    result = new Result(rows);
+  });
 
   describe("Properties", function() {
     it("length", function() {
@@ -28,19 +31,33 @@ describe("vdba.Result", function() {
 
   describe("#find()", function() {
     it("find()", function() {
-      result.find().should.be.eql(rows);
+      result.find().rows.should.be.eql(rows);
     });
 
     it("find({})", function() {
-      result.find({}).should.be.eql(rows);
+      result.find({}).rows.should.be.eql(rows);
     });
 
     it("find({prop: val})", function() {
-      result.find({userId: 1}).should.be.eql([rows[0]]);
+      result.find({userId: 1}).rows.should.be.eql([rows[0]]);
     });
 
     it("find({prop: {$like: val}}", function() {
-      result.find({username: {$like: "user*"}}).should.be.eql([rows[0], rows[1], rows[2]]);
+      result.find({username: {$like: "user*"}}).rows.should.be.eql([rows[0], rows[1], rows[2]]);
+    });
+  });
+
+  describe("#transform()", function() {
+    it("transform(columns : String[], property)", function() {
+      result.transform(["nick", "emails"], "profile");
+      result.rows[1].should.be.eql({userId: 2, username: "user02", password: "pwd02", profile: {nick: "u02", emails: ["user02@test.com"]}});
+      result.rows[2].should.be.eql({userId: 3, username: "user03", password: "pwd03", profile: undefined});
+    });
+
+    it("transform(columns : Object, property)", function() {
+      result.transform({nick: true, emails: true, userId: false}, "profile");
+      result.rows[1].should.be.eql({userId: 2, username: "user02", password: "pwd02", profile: {userId: 2, nick: "u02", emails: ["user02@test.com"]}});
+      result.rows[2].should.be.eql({userId: 3, username: "user03", password: "pwd03", profile: {userId: 3}});
     });
   });
 });
