@@ -25,7 +25,7 @@ module.exports = function(grunt) {
         },
 
         src: ["lib/vdba/**"],
-        dest: "browser-vdba-core.js"
+        dest: "build/browser-vdba-core.js"
       },
 
       node: {
@@ -35,7 +35,7 @@ module.exports = function(grunt) {
         },
 
         src: ["lib/vdba/**"],
-        dest: "node-vdba-core.js"
+        dest: "build/node-vdba-core.js"
       }
     },
 
@@ -56,7 +56,7 @@ module.exports = function(grunt) {
 
     jsdoc: {
       "api.html": {
-        src: ["browser-vdba-core.js"],
+        src: ["build/browser-vdba-core.js"],
         options: {
           recurse: true,
           template: "templates/default",
@@ -73,7 +73,7 @@ module.exports = function(grunt) {
         },
 
         files: {
-          src: ["browser-vdba-core.js"]
+          src: ["build/browser-vdba-core.js"]
         }
       },
 
@@ -103,7 +103,7 @@ module.exports = function(grunt) {
         },
 
         files: {
-          src: ["node-vdba-core.js"]
+          src: ["build/node-vdba-core.js"]
         }
       },
 
@@ -174,7 +174,7 @@ module.exports = function(grunt) {
         },
 
         files: {
-          "browser-type1-vdba-core.min.js": ["browser-vdba-core.js"]
+          "build/browser-type1-vdba-core.min.js": ["build/browser-vdba-core.js"]
         }
       },
 
@@ -188,7 +188,7 @@ module.exports = function(grunt) {
         },
 
         files: {
-          "browser-type2-vdba-core.min.js": ["browser-vdba-core.js"]
+          "build/browser-type2-vdba-core.min.js": ["build/browser-vdba-core.js"]
         }
       },
 
@@ -202,7 +202,7 @@ module.exports = function(grunt) {
         },
 
         files: {
-          "node-type1-vdba-core.min.js": ["node-vdba-core.js"]
+          "build/node-type1-vdba-core.min.js": ["build/node-vdba-core.js"]
         }
       },
 
@@ -216,7 +216,7 @@ module.exports = function(grunt) {
         },
 
         files: {
-          "node-type2-vdba-core.min.js": ["node-vdba-core.js"]
+          "build/node-type2-vdba-core.min.js": ["build/node-vdba-core.js"]
         }
       }
     }

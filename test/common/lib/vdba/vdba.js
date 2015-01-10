@@ -60,10 +60,6 @@ describe("vdba", function() {
       vdba.should.have.property("Server");
     });
 
-    it("vdba.SQLFilterFormatter", function() {
-      vdba.should.have.property("SQLFilterFormatter");
-    });
-
     it("vdba.Table", function() {
       vdba.should.have.property("Table");
     });

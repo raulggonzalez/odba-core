@@ -1,6 +1,5 @@
-//suite
 describe("vdba.Aggregator", function() {
-  var agg, objects, object;
+  var agg, object, objects, result;
   var transformedObjects = [
     {userId: 1, username: "user01", password: "pwd01", profile: {nick: "u01", emails: ["user01@test.com", "u01@test.com"]}},
     {userId: 2, username: "user02", password: "pwd02", profile: {nick: "u02", emails: ["user02@test.com"]}},
@@ -16,6 +15,7 @@ describe("vdba.Aggregator", function() {
       {userId: 3, username: "user03", password: "pwd03", nick: "u03", emails: ["user03@test.com", "u03@test.com"]}
     ];
     object = objects[0];
+    result = new vdba.Result(objects);
   });
 
   describe("#transformObject()", function() {
@@ -40,10 +40,10 @@ describe("vdba.Aggregator", function() {
     });
   });
 
-  describe("#transformObjects()", function() {
-    it("transformObjects()", function() {
-      agg.transformObjects(objects, ["nick", "emails"], "profile");
-      objects.should.be.eql(transformedObjects);
+  describe("#transformResult()", function() {
+    it("transformResult()", function() {
+      agg.transformResult(result, ["nick", "emails"], "profile");
+      result.rows.should.be.eql(transformedObjects);
     });
   });
 
@@ -75,10 +75,10 @@ describe("vdba.Aggregator", function() {
       });
     });
 
-    describe("Several objects", function() {
-      it("transform(objects, columns, property)", function() {
-        agg.transform(objects, ["nick", "emails"], "profile");
-        objects.should.be.eql(transformedObjects);
+    describe("A result", function() {
+      it("transform(result, columns, property)", function() {
+        agg.transform(result, ["nick", "emails"], "profile");
+        result.rows.should.be.eql(transformedObjects);
       });
     });
   });

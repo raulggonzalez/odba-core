@@ -1,10 +1,9 @@
-/*! vdba-core - 0.10.0 (2015-01-08) */
+/*! vdba-core - 0.11.0 (2015-01-10) */
 
 (function() {
 
 /**
- * An aggregator.
- *
+ * @classdesc An aggregator.
  * @class vdba.Aggregator
  * @private
  */
@@ -21,9 +20,9 @@ Aggregator.aggregator = new Aggregator();
  * @function
  * @memberof vdba.Aggregator#
  *
- * @param {Object|Object[]} object  The object(s) to transform.
- * @param {String[]|Object} columns The column names to transform into a property.
- * @param {String} property         The property name.
+ * @param {Object|vdba.Result} object The object to transform.
+ * @param {String[]|Object} columns   The column names to transform into a property.
+ * @param {String} property           The property name.
  */
 Aggregator.prototype.transform = function transform(object, columns, property) {
   //(1) pre: arguments
@@ -32,7 +31,7 @@ Aggregator.prototype.transform = function transform(object, columns, property) {
   if (!property) throw new Error("Property name expected.");
 
   //(2) transform
-  if (object instanceof Array) this.transformObjects(object, columns, property);
+  if (object instanceof vdba.Result) this.transformResult(object, columns, property);
   else this.transformObject(object, columns, property);
 };
 
@@ -71,20 +70,19 @@ Aggregator.prototype.transformObject = function transformObject(object, columns,
 /**
  * @private
  */
-Aggregator.prototype.transformObjects = function transformObjects(objects, columns, property) {
-  for (var i = 0; i < objects.length; ++i) this.transform(objects[i], columns, property);
+Aggregator.prototype.transformResult = function transformResult(result, columns, property) {
+  for (var i = 0; i < result.length; ++i) this.transformObject(result.rows[i], columns, property);
 };
 
 /**
- * A table column.
- *
+ * @classdesc A table column.
  * @class vdba.Column
  * @abstract
  * @protected
  *
- * @param {String} name     The column name.
- * @param {String} type     The column type.
- * @param {Object} options  The column options.
+ * @param {String} name       The column name.
+ * @param {String} type       The column type.
+ * @param {Object} [options]  The column options.
  */
 function Column(name, type, options) {
   //(1) pre: arguments
@@ -117,9 +115,8 @@ function Column(name, type, options) {
    * @name options
    * @type {Object}
    * @memberof vdba.Column#
-   * @protected
    */
-  Object.defineProperty(this, "options", {value: options});
+  Object.defineProperty(this, "options", {value: options, enumerable: true});
 }
 
 /**
@@ -164,8 +161,34 @@ Column.prototype.__defineGetter__("pk", function() {
  *
  * @returns {Boolean}
  */
-Column.prototype.isSet = function isCollection() {
+Column.prototype.isSet = function isSet() {
   return /^set<.+>$/.test(this.type);
+};
+
+/**
+ * Checks whether the column stores a set of integers.
+ *
+ * @name isSetOfIntegers
+ * @function
+ * @memberof vdba.Column#
+ *
+ * @returns {Boolean}
+ */
+Column.prototype.isSetOfIntegers = function isSetOfIntegers() {
+  return (this.type == "set<integer>");
+};
+
+/**
+ * Checks whether the column stores a set of texts.
+ *
+ * @name isSetOfTexts
+ * @function
+ * @memberof vdba.Column#
+ *
+ * @returns {Boolean}
+ */
+Column.prototype.isSetOfTexts = function isSetOfTexts() {
+  return (this.type == "set<text>");
 };
 
 /**
@@ -234,8 +257,7 @@ Column.prototype.isDateTime = function isDateTime() {
 };
 
 /**
- * A combinator.
- *
+ * @classdesc A combinator.
  * @class vdba.Combinator
  * @private
  */
@@ -282,8 +304,7 @@ Combinator.prototype.join = function join(source, target, sourceCol, targetCol, 
 };
 
 /**
- * A connection.
- *
+ * @classdesc A connection.
  * @class vdba.Connection
  * @abstract
  * @protected
@@ -318,7 +339,7 @@ function Connection(driver, config) {
  *
  * @name mode
  * @type {String}
- * @memberof vdba.Connection
+ * @memberof vdba.Connection#
  */
 Connection.prototype.__defineGetter__("mode", function() {
   return this.config.mode;
@@ -428,8 +449,7 @@ Connection.prototype.runTransaction = function runTransaction() {
 };
 
 /**
- * A database.
- *
+ * @classdesc A database.
  * @class vdba.Database
  * @abstract
  * @protected
@@ -823,8 +843,7 @@ if (SPEC_TYPE > 1) {
 }
 
 /**
- * A table cache.
- *
+ * @classdesc A table cache.
  * @class vdba.DefinitionCache
  * @protected
  */
@@ -996,8 +1015,7 @@ DefinitionCache.prototype.removeTable = function removeTable(schema, table) {
 };
 
 /**
- * A VDBA driver.
- *
+ * @classdesc A VDBA driver.
  * @class vdba.Driver
  * @abstract
  * @protected
@@ -1136,8 +1154,7 @@ Driver.prototype.openConnection = function openConnection(config, callback) {
 };
 
 /**
- * A result filter.
- *
+ * @classdesc A result filter.
  * @class vdba.Filter
  * @protected
  */
@@ -1536,8 +1553,7 @@ Filter.prototype.$notContains = function $notContains(row, prop, value) {
 };
 
 /**
- * An index.
- *
+ * @classdesc An index.
  * @class vdba.Index
  * @abstract
  * @protected
@@ -1588,8 +1604,7 @@ Index.prototype.__defineGetter__("unique", function() {
 });
 
 /**
- * A join.
- *
+ * @classdesc A join.
  * @class vdba.Join
  * @protected
  *
@@ -1655,8 +1670,7 @@ function Join(type, mode, target, col1, col2) {
 }
 
 /**
- * A mapper.
- *
+ * @classdesc A mapper.
  * @class vdba.Mapper
  * @protected
  */
@@ -1763,8 +1777,7 @@ Mapper.prototype.customMap = function(map, row) {
 };
 
 /**
- * A query.
- *
+ * @classdesc A query.
  * @class vdba.Query
  * @abstract
  */
@@ -1938,42 +1951,6 @@ Query.prototype.hasOrderBy = function hasOrderBy() {
 };
 
 /**
- * Returns all records.
- *
- * @name findAll
- * @function
- * @memberof vdba.Query#
- * @abstract
- *
- * @param {Function} callback The function to call: fn(error, result).
- */
-Query.prototype.findAll = function findAll() {
-  throw new Error("Abstract method.");
-};
-
-/**
- * findAll() with casting.
- *
- * @name mapAll
- * @function
- * @memberof vdba.Query#
- *
- * @param {Object|Function|String[]} map  The mapping.
- * @param {Function} callback             The function to call: fn(error, result).
- */
-Query.prototype.mapAll = function mapAll(map, callback) {
-  //(1) pre: arguments
-  if (!map) throw new Error("Map expected.");
-  if (!callback) throw new Error("Callback expected.");
-
-  //(2) find and map
-  this.findAll(function(error, result) {
-    if (error) callback(error);
-    else callback(undefined, new vdba.Mapper().map(map, result));
-  });
-};
-
-/**
  * Runs the query.
  *
  * @name find
@@ -2016,7 +1993,54 @@ Query.prototype.map = function(map, filter, callback) {
     if (error) {
       callback(error);
     } else {
-      callback(undefined, new vdba.Mapper().map(map, result));
+      vdba.Mapper.mapper.map(map, result.rows);
+      callback(undefined, result);
+    }
+  });
+};
+
+/**
+ * Returns all records.
+ *
+ * @name findAll
+ * @function
+ * @memberof vdba.Query#
+ *
+ * @param {Function} callback The function to call: fn(error, result).
+ */
+Query.prototype.findAll = function findAll(callback) {
+  //(1) pre: arguments
+  if (!callback) throw new Error("Callback expected.");
+
+  //(2) configure query
+  this.filterBy = {};
+
+  //(3) find
+  this.find(callback);
+};
+
+/**
+ * findAll() with casting.
+ *
+ * @name mapAll
+ * @function
+ * @memberof vdba.Query#
+ *
+ * @param {Object|Function|String[]} map  The mapping.
+ * @param {Function} callback             The function to call: fn(error, result).
+ */
+Query.prototype.mapAll = function mapAll(map, callback) {
+  //(1) pre: arguments
+  if (!map) throw new Error("Map expected.");
+  if (!callback) throw new Error("Callback expected.");
+
+  //(2) find and map
+  this.findAll(function(error, result) {
+    if (error) {
+      callback(error);
+    } else {
+      vdba.Mapper.mapper.map(map, result.rows);
+      callback(undefined, result);
     }
   });
 };
@@ -2027,13 +2051,32 @@ Query.prototype.map = function(map, filter, callback) {
  * @name findOne
  * @function
  * @memberof vdba.Query#
- * @abstract
  *
  * @param {Object} [filter]   The filter object.
  * @param {Function} callback The function to call: fn(error, record).
  */
-Query.prototype.findOne = function findOne() {
-  throw new Error("Abstract method.");
+Query.prototype.findOne = function findOne(filter, callback) {
+  //(1) pre: arguments
+  if (arguments.length == 1 && arguments[0] instanceof Function) {
+    callback = arguments[0];
+    filter = undefined;
+  }
+
+  if (!callback) throw new Error("Callback expected.");
+
+  //(2) configure query
+  if (filter) this.filterBy = filter;
+  this.limitTo.count = 1;
+
+  //(3) find
+  this.find(function(error, result) {
+    if (error) {
+      callback(error);
+    } else {
+      if (result.length === 0) callback();
+      else callback(undefined, result.rows[0]);
+    }
+  });
 };
 
 /**
@@ -2065,7 +2108,7 @@ Query.prototype.mapOne = function mapOne(map, filter, callback){
       callback(error);
     } else {
       if (!row) callback();
-      else callback(undefined, new vdba.Mapper().mapRow(map, row));
+      else callback(undefined, vdba.Mapper.mapper.mapRow(map, row));
     }
   });
 };
@@ -2144,6 +2187,7 @@ Query.prototype.joinoo = function joinoo(target, col1, col2, callback) {
   return this;
 };
 
+
 /**
  * Performs an one-to-many inner join.
  *
@@ -2208,8 +2252,7 @@ Query.prototype.isSimple = function isSimple() {
 };
 
 /**
- * A query result.
- *
+ * @classdesc A query result.
  * @class vdba.Result
  *
  * @param {Array} rows        The rows.
@@ -2281,56 +2324,6 @@ Result.prototype.map = function(map, where) {
 };
 
 /**
- * Casts a columns from the current types to the specified types.
- *
- * @name cast
- * @function
- * @memberof vdba.Result#
- *
- * @param {Object} columns  The columns to cast.
- */
-Result.prototype.cast = function cast(columns) {
-  for (var i = 0; i < this.length; ++i) Result.castRow(this.rows[i], columns);
-};
-
-/**
- * Casts a row from the current types to the specified types.
- *
- * @name castRow
- * @function
- * @memberof vdba.Result
- *
- * @param {Object} row      The row.
- * @param {Object} columns  The columns.
- *
- * @returns {Object} The same row to chain.
- */
-Result.castRow = function castRow(row, columns) {
-  for (var i = 0, colNames = Object.keys(columns); i < colNames.length; ++i) {
-    var col = columns[colNames[i]];
-
-    if (row.hasOwnProperty(col.name)) {
-      var curVal, newVal;
-
-      curVal = row[col.name];
-
-      if (col.type == "boolean") newVal = Boolean(curVal);
-      else if (col.type == "date") newVal = new Date(curVal);
-      else if (col.type == "datetime") newVal = new Date(curVal);
-      else if (col.type == "integer") newVal = parseInt(curVal);
-      else if (col.type == "real") newVal = parseFloat(curVal);
-      else if (col.type == "text") newVal = String(curVal);
-      else if (col.type == "time") newVal = new Date(curVal);
-      else newVal = curVal;
-
-      row[col.name] = newVal;
-    }
-  }
-
-  return row;
-};
-
-/**
  * Limits the number of rows.
  *
  * @name limit
@@ -2363,244 +2356,18 @@ Result.prototype.limit = function limit(count, start) {
  *
  * @returns {vdba.Result} The same result for chainning if needed.
  */
-Result.prototype.transform = function transform(columns, property) {
-  var agg = vdba.Aggregator.aggregator;
+//Result.prototype.transform = function transform(columns, property) {
+//  var agg = vdba.Aggregator.aggregator;
 
   //(1) transform
-  agg.transform.apply(agg, [this.rows].concat(Array.prototype.slice.call(arguments)));
+//  agg.transform.apply(agg, [this.rows].concat(Array.prototype.slice.call(arguments)));
 
   //(2) return
-  return this;
-};
+//  return this;
+//};
 
 /**
- * A SQL filter formatter.
- *
- * @class vdba.SQLFilterFormatter
- * @protected
- *
- * @param {String} [placeholder]  The placeholder. Default: ?.
- */
-function SQLFilterFormatter(placeholder) {
-  /**
-   * The placeholder.
-   *
-   * @name placeholder
-   * @type {String}
-   * @memberof vdba.SQLFilterFormatter#
-   */
-  Object.defineProperty(this, "placeholder", {value: placeholder, enumerable: true});
-}
-
-/**
- * Formats a filter as an SQL expression.
- *
- * @name format
- * @function
- * @memberof vdba.SQLFilterFormatter#
- *
- * @param {Object} filter   The filter to format.
- *
- * @returns {Object} An object with two properties: expression and parameters.
- */
-SQLFilterFormatter.prototype.format = function format(filter) {
-  var sql, params, keys;
-
-  //(1) pre: arguments
-  if (!filter) throw new Error("Filter expected.");
-
-  //(2) format
-  keys = Object.keys(filter);
-
-  if (keys.length === 0) {
-    sql = this.placeholder + " = " + this.placeholder;
-    params = [true, true];
-  } else {
-    sql = "";
-    params = [];
-
-    for (var i = 0; i < keys.length; ++i) {
-      var col = keys[i];
-      sql += (i === 0 ? "" : " and ") + "(" + this.formatItem(col, filter[col], params) + ")";
-    }
-  }
-
-  //(3) return
-  return {expression: sql, parameters: params};
-};
-
-/**
- * @private
- */
-SQLFilterFormatter.prototype.formatItem = function formatItem(col, val, params) {
-  var item;
-
-  //(1) format
-  if (typeof(val) != "object") {        //col: value
-    item = this.$eq(col, val, params);
-  } else {                              //col: {$op: val, $op: val...}
-    item = "";
-
-    for (var i = 0, ops = Object.keys(val); i < ops.length; ++i) {
-      item += (i === 0 ? "" : " and ") + this.formatOp(ops[i], col, val[ops[i]], params);
-    }
-  }
-
-  //(2) return
-  return item;
-};
-
-/**
- * @private
- */
-SQLFilterFormatter.prototype.formatOp = function formatOp(op, col, val, params) {
-  var res;
-
-  //(1) format
-  if (op == "$eq") res = this.$eq(col, val, params);
-  else if (op == "$ne") res = this.$ne(col, val, params);
-  else if (op == "$lt") res = this.$lt(col, val, params);
-  else if (op == "$le") res = this.$le(col, val, params);
-  else if (op == "$gt") res = this.$gt(col, val, params);
-  else if (op == "$ge") res = this.$ge(col, val, params);
-  else if (op == "$like") res = this.$like(col, val, params);
-  else if (op == "$notLike") res = this.$notLike(col, val, params);
-  else if (op == "$nlike") res = this.$notLike(col, val, params);
-  else if (op == "$in") res = this.$in(col, val, params);
-  else if (op == "$notIn") res = this.$notIn(col, val, params);
-  else if (op == "$nin") res = this.$notIn(col, val, params);
-  else if (op == "$contain") res = this.$contain(col, val, params);
-  else if (op == "$notContain") res = this.$notContain(col, val, params);
-  else if (op == "$ncontain") res = this.$notContain(col, val, params);
-  else throw new Error("Unknown operator: " + op + ".");
-
-  //(2) return
-  return res;
-};
-
-/**
- * @private
- */
-SQLFilterFormatter.prototype.$eq = function $eq(col, val, params) {
-  var res;
-
-  if (val === null || val === undefined) {
-    res = col + " is null";
-  } else {
-    params.push(val);
-    res = col + " = " + this.placeholder;
-  }
-
-  return res;
-};
-
-/**
- * @private
- */
-SQLFilterFormatter.prototype.$ne = function $ne(col, val, params) {
-  var res;
-
-  if (val === null || val === undefined) {
-    res = col + " is not null";
-  } else {
-    params.push(val);
-    res = col + " <> " + this.placeholder;
-  }
-
-  return res;
-};
-
-/**
- * @private
- */
-SQLFilterFormatter.prototype.$lt = function $lt(col, val, params) {
-  params.push(val);
-  return col + " < " + this.placeholder;
-};
-
-/**
- * @private
- */
-SQLFilterFormatter.prototype.$le = function $le(col, val, params) {
-  params.push(val);
-  return col + " <= " + this.placeholder;
-};
-
-/**
- * @private
- */
-SQLFilterFormatter.prototype.$gt = function $gt(col, val, params) {
-  params.push(val);
-  return col + " > " + this.placeholder;
-};
-
-/**
- * @private
- */
-SQLFilterFormatter.prototype.$ge = function $ge(col, val, params) {
-  params.push(val);
-  return col + " >= " + this.placeholder;
-};
-
-/**
- * @private
- */
-SQLFilterFormatter.prototype.$like = function $like(col, val, params) {
-  params.push(val);
-  return col + " like " + this.placeholder;
-};
-
-/**
- * @private
- */
-SQLFilterFormatter.prototype.$notLike = function $notLike(col, val, params) {
-  params.push(val);
-  return col + " not like " + this.placeholder;
-};
-
-/**
- * @private
- */
-SQLFilterFormatter.prototype.$in = function $in(col, vals, params) {
-  var expr;
-
-  //(1) format
-  expr = col + " in (";
-
-  for (var i = 0; i < vals.length; ++i) {
-    params.push(vals[i]);
-    expr += (i === 0 ? "" : ", ") + this.placeholder;
-  }
-
-  expr += ")";
-
-  //(2) return
-  return expr;
-};
-
-/**
- * @private
- */
-SQLFilterFormatter.prototype.$notIn = function $notIn(col, vals, params) {
-  var expr;
-
-  //(1) format
-  expr = col + " not in (";
-
-  for (var i = 0; i < vals.length; ++i) {
-    params.push(vals[i]);
-    expr += (i === 0 ? "" : ", ") + this.placeholder;
-  }
-
-  expr += ")";
-
-  //(2) return
-  return expr;
-};
-
-/**
- * A database schema.
- *
+ * @classdesc A database schema.
  * @class vdba.Schema
  * @abstract
  * @protected
@@ -2724,8 +2491,7 @@ if (SPEC_TYPE > 1) {
 }
 
 /**
- * A database engine.
- *
+ * @classdesc A database engine.
  * @class vdba.Server
  * @abstract
  * @protected
@@ -2816,8 +2582,7 @@ if (SPEC_TYPE > 1) {
 }
 
 /**
- * A table.
- *
+ * @classdesc A table.
  * @class vdba.Table
  * @abstract
  * @protected
@@ -3362,7 +3127,6 @@ Object.defineProperty(vdba, "Query", {value: Query, enumerable: true});
 Object.defineProperty(vdba, "Result", {value: Result, enumerable: true});
 Object.defineProperty(vdba, "Schema", {value: Schema, enumerable: true});
 Object.defineProperty(vdba, "Server", {value: Server, enumerable: true});
-Object.defineProperty(vdba, "SQLFilterFormatter", {value: SQLFilterFormatter, enumerable: true});
 Object.defineProperty(vdba, "Table", {value: Table, enumerable: true});
 
 })();

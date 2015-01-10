@@ -46,18 +46,4 @@ describe("vdba.Result", function() {
       result.find({username: {$like: "user*"}}).rows.should.be.eql([rows[0], rows[1], rows[2]]);
     });
   });
-
-  describe("#transform()", function() {
-    it("transform(columns : String[], property)", function() {
-      result.transform(["nick", "emails"], "profile");
-      result.rows[1].should.be.eql({userId: 2, username: "user02", password: "pwd02", profile: {nick: "u02", emails: ["user02@test.com"]}});
-      result.rows[2].should.be.eql({userId: 3, username: "user03", password: "pwd03", profile: undefined});
-    });
-
-    it("transform(columns : Object, property)", function() {
-      result.transform({nick: true, emails: true, userId: false}, "profile");
-      result.rows[1].should.be.eql({userId: 2, username: "user02", password: "pwd02", profile: {userId: 2, nick: "u02", emails: ["user02@test.com"]}});
-      result.rows[2].should.be.eql({userId: 3, username: "user03", password: "pwd03", profile: {userId: 3}});
-    });
-  });
 });
