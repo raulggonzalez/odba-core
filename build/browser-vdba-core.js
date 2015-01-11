@@ -1,4 +1,4 @@
-/*! vdba-core - 0.11.0 (2015-01-10) */
+/*! vdba-core - 0.11.1 (2015-01-11) */
 
 (function() {
 
@@ -1086,10 +1086,7 @@ Driver.getDriver = function getDriver(name, options) {
  * @function
  * @memberof vdba.Driver
  *
- * @param {vdba.Driver} driver      The driver.
- *
- * @example
- * vdba.Driver.register(new IndexedDBDriver());
+ * @param {vdba.Driver} driver  The driver.
  */
 Driver.register = function register(driver) {
   var cache = vdba.Driver.cache;
@@ -1115,9 +1112,6 @@ Driver.register = function register(driver) {
  *
  * @param {Object} config The connection configuration.
  * @returns {vdba.Connection}
- *
- * @example An IndexedDB connection.
- * cx = drv.createConnection({database: "mydb"});
  */
 Driver.prototype.createConnection = function createConnection() {
   throw new Error("Abstract method.");
@@ -1132,9 +1126,6 @@ Driver.prototype.createConnection = function createConnection() {
  *
  * @param {Object} config     The configuration object.
  * @param {Function} callback The function to call: fn(error, cx).
- *
- * @example An IndexedDB connection.
- * drv.openConnection({database: "mydb"}, function(error, cx) { ... });
  */
 Driver.prototype.openConnection = function openConnection(config, callback) {
   var cx;
@@ -1795,7 +1786,7 @@ function Query() {
   /**
    * The filter, that is, the where clause.
    *
-   * @name filter
+   * @name filterBy
    * @type {Object}
    * @memberof vdba.Query#
    * @protected
@@ -2654,7 +2645,7 @@ Table.prototype.__defineGetter__("qualifiedName", function() {
 });
 
 /**
- * The qualified name.
+ * Alias of qualifiedName.
  *
  * @name qn
  * @type {String}
@@ -2676,7 +2667,7 @@ Table.prototype.__defineGetter__("fullQualifiedName", function() {
 });
 
 /**
- * The full qualified name.
+ * Alias of fullQualifiedName.
  *
  * @name fqn
  * @type {String}

@@ -30,8 +30,9 @@ module.exports = function(grunt) {
 
       node: {
         options: {
-          banner: "/*! <%= pkg.name %> - <%= pkg.version %> (<%= grunt.template.today('yyyy-mm-dd') %>) */\n\n(function() {",
-          footer: "\n\n" + grunt.file.read("lib/node-api.js") + "\n\n})();"
+          banner: "/*! <%= pkg.name %> - <%= pkg.version %> (<%= grunt.template.today('yyyy-mm-dd') %>) */\n\n(function() {\n\n" +
+                  grunt.file.read("lib/node-api.js") + "\n\n",
+          footer: "\n\n})();"
         },
 
         src: ["lib/vdba/**"],

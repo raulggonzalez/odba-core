@@ -1,6 +1,43 @@
-/*! vdba-core - 0.11.0 (2015-01-10) */
+/*! vdba-core - 0.11.1 (2015-01-11) */
 
 (function() {
+
+//imports
+var util = require("util");
+
+//api
+var vdba = module.exports;
+
+/**
+ * The vdba package.
+ *
+ * @namespace vdba
+ */
+Object.defineProperty(vdba, "util", {
+  value: {
+    inherits: util.inherits,
+    _extend: util._extend
+  }
+});
+
+Object.defineProperty(vdba, "Aggregator", {value: Aggregator, enumerable: true});
+Object.defineProperty(vdba, "Column", {value: Column, enumerable: true});
+Object.defineProperty(vdba, "Combinator", {value: Combinator, enumerable: true});
+Object.defineProperty(vdba, "Connection", {value: Connection, enumerable: true});
+Object.defineProperty(vdba, "Database", {value: Database, enumerable: true});
+Object.defineProperty(vdba, "DefinitionCache", {value: DefinitionCache, enumerable: false});
+Object.defineProperty(vdba, "Driver", {value: Driver, enumerable: true});
+Object.defineProperty(vdba, "Filter", {value: Filter, enumerable: true});
+Object.defineProperty(vdba, "Index", {value: Index, enumerable: true});
+Object.defineProperty(vdba, "Join", {value: Join, enumerable: true});
+Object.defineProperty(vdba, "Mapper", {value: Mapper, enumerable: true});
+Object.defineProperty(vdba, "Query", {value: Query, enumerable: true});
+Object.defineProperty(vdba, "Result", {value: Result, enumerable: true});
+Object.defineProperty(vdba, "Schema", {value: Schema, enumerable: true});
+Object.defineProperty(vdba, "Server", {value: Server, enumerable: true});
+Object.defineProperty(vdba, "Table", {value: Table, enumerable: true});
+
+
 
 /**
  * @classdesc An aggregator.
@@ -1086,10 +1123,7 @@ Driver.getDriver = function getDriver(name, options) {
  * @function
  * @memberof vdba.Driver
  *
- * @param {vdba.Driver} driver      The driver.
- *
- * @example
- * vdba.Driver.register(new IndexedDBDriver());
+ * @param {vdba.Driver} driver  The driver.
  */
 Driver.register = function register(driver) {
   var cache = vdba.Driver.cache;
@@ -1115,9 +1149,6 @@ Driver.register = function register(driver) {
  *
  * @param {Object} config The connection configuration.
  * @returns {vdba.Connection}
- *
- * @example An IndexedDB connection.
- * cx = drv.createConnection({database: "mydb"});
  */
 Driver.prototype.createConnection = function createConnection() {
   throw new Error("Abstract method.");
@@ -1132,9 +1163,6 @@ Driver.prototype.createConnection = function createConnection() {
  *
  * @param {Object} config     The configuration object.
  * @param {Function} callback The function to call: fn(error, cx).
- *
- * @example An IndexedDB connection.
- * drv.openConnection({database: "mydb"}, function(error, cx) { ... });
  */
 Driver.prototype.openConnection = function openConnection(config, callback) {
   var cx;
@@ -1795,7 +1823,7 @@ function Query() {
   /**
    * The filter, that is, the where clause.
    *
-   * @name filter
+   * @name filterBy
    * @type {Object}
    * @memberof vdba.Query#
    * @protected
@@ -2654,7 +2682,7 @@ Table.prototype.__defineGetter__("qualifiedName", function() {
 });
 
 /**
- * The qualified name.
+ * Alias of qualifiedName.
  *
  * @name qn
  * @type {String}
@@ -2676,7 +2704,7 @@ Table.prototype.__defineGetter__("fullQualifiedName", function() {
 });
 
 /**
- * The full qualified name.
+ * Alias of fullQualifiedName.
  *
  * @name fqn
  * @type {String}
@@ -3093,40 +3121,5 @@ Table.prototype.remove = function remove() {
 Table.prototype.truncate = function truncate() {
   throw new Error("Abstract method.");
 };
-
-//imports
-var util = require("util");
-
-//api
-var vdba = module.exports;
-
-/**
- * The vdba package.
- *
- * @namespace vdba
- */
-Object.defineProperty(vdba, "util", {
-  value: {
-    inherits: util.inherits,
-    _extend: util._extend
-  }
-});
-
-Object.defineProperty(vdba, "Aggregator", {value: Aggregator, enumerable: true});
-Object.defineProperty(vdba, "Column", {value: Column, enumerable: true});
-Object.defineProperty(vdba, "Combinator", {value: Combinator, enumerable: true});
-Object.defineProperty(vdba, "Connection", {value: Connection, enumerable: true});
-Object.defineProperty(vdba, "Database", {value: Database, enumerable: true});
-Object.defineProperty(vdba, "DefinitionCache", {value: DefinitionCache, enumerable: false});
-Object.defineProperty(vdba, "Driver", {value: Driver, enumerable: true});
-Object.defineProperty(vdba, "Filter", {value: Filter, enumerable: true});
-Object.defineProperty(vdba, "Index", {value: Index, enumerable: true});
-Object.defineProperty(vdba, "Join", {value: Join, enumerable: true});
-Object.defineProperty(vdba, "Mapper", {value: Mapper, enumerable: true});
-Object.defineProperty(vdba, "Query", {value: Query, enumerable: true});
-Object.defineProperty(vdba, "Result", {value: Result, enumerable: true});
-Object.defineProperty(vdba, "Schema", {value: Schema, enumerable: true});
-Object.defineProperty(vdba, "Server", {value: Server, enumerable: true});
-Object.defineProperty(vdba, "Table", {value: Table, enumerable: true});
 
 })();
