@@ -128,7 +128,7 @@ module.exports = function(grunt) {
       options: {
         ignoreLeaks: false,
         quiet: false,
-        reporter: "spec",
+        reporter: "dot",
         require: ["should"]
       },
 
